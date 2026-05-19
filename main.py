@@ -2,12 +2,12 @@ import Task as T
 import Storage as S
 from Task_C import Task
 
-Menu = {1: "Add Task",2:"View Tasks",3:"Task completed", 4:"Exit"}
+Menu = {1: "Add Task",2:"View Tasks",3:"Task completed", 4:"Show Statistics",0:"Exit"}
 data = S.load_tasks()
 tasks = [Task.from_dict(task_data) for task_data in data]
 print(Menu)
 choice = input("What would you like to do: ")
-while(choice!="4"):
+while(choice!="0"):
     if choice == "1":
         T.add_task(tasks)
         print("Task added")
@@ -18,8 +18,11 @@ while(choice!="4"):
         while(flag):
               print("Not a number, Please try again")
               T.task_complete(tasks)
-        print("Task removed")
-    else: print("Not a valid choice, try again")
+        print("Task completed")
+    elif choice == "4": 
+        print("Your statistics: \n")
+        T.show_statistics(tasks)
+    else: print("Not a vaild option")
     print(Menu)
     choice = input("What would you like to do: ")
 
