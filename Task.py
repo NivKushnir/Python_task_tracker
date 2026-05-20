@@ -17,7 +17,7 @@ def add_task(tasks):
             print("Invalid due date, try again!")
 
     tasks.append(Task(new_task,False,p,d_date))
-    tasks.sort(key=lambda task: task.completed)
+    tasks.sort(key=lambda task: (task.completed,task.due_date))
 
 def show_tasks(tasks):
     if not tasks:
