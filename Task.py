@@ -44,3 +44,39 @@ def show_statistics(tasks):
     print(f'High task remaining: {total_High}')
     print(f'Medium task remaining: {total_Medium}')
     print(f'Low task remaining: {total_Low}')
+
+def filter_tasks(tasks):
+    filter_menu = {1:"Completed",2:"Incomplete",3:"High priority",4:"Medium priority",5:"Low priority"}
+    print(f'Here is the filter options {filter_menu}')
+    filter_choice = input("What would you like to filter: ")
+    filtered_tasks =[]
+    while filter_choice not in ["1","2","3","4","5"]: 
+        if filter_choice == "1":
+            for task in tasks:
+                if task.completed:
+                    filtered_tasks.append(task)
+            return filtered_tasks
+        elif filter_choice == "2":
+            for task in tasks:
+                if not task.completed:
+                    filtered_tasks.append(task)
+            return filtered_tasks
+        elif filter_choice == "3":
+            for task in tasks:
+                if task.priority == "High":
+                    filtered_tasks.append(task)
+            return filtered_tasks
+        elif filter_choice == "4":
+            for task in tasks:
+                if task.priority == "Medium":
+                    filtered_tasks.append(task)
+            return filtered_tasks
+        elif filter_choice == "5":
+            for task in tasks:
+                if task.priority == "Low":
+                    filtered_tasks.append(task)
+            return filtered_tasks
+        else: 
+            print("Invalid choice try again")
+            print(f'Here is the filter options {filter_menu}')
+            filter_choice = input("What would you like to filter: ")
