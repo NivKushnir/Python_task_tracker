@@ -3,8 +3,7 @@ import Storage as S
 from Task_C import Task
 
 Menu = {1: "Add Task",2:"View Tasks",3:"Task completed", 4:"Show Statistics",5:"Filter Tasks" ,0:"Exit"}
-data = S.load_tasks()
-tasks = [Task.from_dict(task_data) for task_data in data]
+tasks = S.load_tasks()
 print(Menu)
 choice = input("What would you like to do: ")
 while(choice!="0"):
@@ -29,6 +28,5 @@ while(choice!="0"):
     print(Menu)
     choice = input("What would you like to do: ")
 
-new_data = [task.to_dict() for task in tasks]
-S.save_tasks(tasks=new_data)
+S.save_tasks(tasks=tasks)
 print("Have a good day")

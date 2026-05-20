@@ -1,11 +1,22 @@
 from Task_C import Task
+from datetime import datetime
 
 def add_task(tasks):
     new_task = input("What task would you like to add: ")
-    p = input("What is the task priority: High/Medium/Low")
+    p = input("What is the task priority: High/Medium/Low: ")
     while p not in ["High","Medium","Low"]:
         p = input("What is the task priority: High/Medium/Low")
-    tasks.append(Task(new_task,False,p))
+    
+    valid = False
+    while not valid:
+        d_date = input("What is the due date of the task: YYYY-MM-DD ")
+        try:
+            datetime.strptime(d_date,"%Y-%m-%d")
+            valid = True
+        except ValueError:
+            print("Invalid due date, try again!")
+
+    tasks.append(Task(new_task,False,p,d_date))
     tasks.sort(key=lambda task: task.completed)
 
 def show_tasks(tasks):
@@ -14,8 +25,8 @@ def show_tasks(tasks):
         return
     for t in tasks:
         if t.completed:
-            print(f'[X] {t.title} ({t.priority})')
-        else: print(f'[ ] {t.title} ({t.priority})')
+            print(f'[X] {t.title} ({t.priority}) - Due date {t.due_date}')
+        else: print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date}')
 
 def task_complete(tasks):
     if not tasks:
