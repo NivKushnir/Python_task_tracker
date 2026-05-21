@@ -24,9 +24,14 @@ def show_tasks(tasks):
         print("The task list is empty")
         return
     for t in tasks:
+        today = datetime.now()
+        d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
+
         if t.completed:
-            print(f'[X] {t.title} ({t.priority}) - Due date {t.due_date}')
-        else: print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date}')
+            print(f'[X] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
+        elif d_date < today and not t.completed:
+            print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} !!!Overdue!!! by {(today-d_date).days} days ')
+        else: print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
 
 def task_complete(tasks):
     if not tasks:
@@ -36,7 +41,7 @@ def task_complete(tasks):
         index = int(input("What task number did you complete: "))-1
         if 0<= index < len(tasks):
             tasks[index].completed = True
-            tasks.sort(key=lambda task: task.completed)
+            tasks.sort(key=lambda task: (task.completed,task.due_date))
     except ValueError:
         return True
 
