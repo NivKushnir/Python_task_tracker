@@ -29,5 +29,6 @@ while(choice!="0"):
     print(Menu)
     choice = input("What would you like to do: ")
 
+#saves the tasks list to a json file
 S.save_tasks(tasks=tasks)
 print("Have a good day")
