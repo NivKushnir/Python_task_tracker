@@ -1,6 +1,7 @@
 from Task_C import Task
 from datetime import datetime
 
+#the fuction will create a task object and will add it to the task list
 def add_task(tasks):
     new_task = input("What task would you like to add: ")
     p = input("What is the task priority: High/Medium/Low: ")
@@ -19,6 +20,7 @@ def add_task(tasks):
     tasks.append(Task(new_task,False,p,d_date))
     tasks.sort(key=lambda task: (task.completed,task.due_date))
 
+#the function will show all the task in the list
 def show_tasks(tasks):
     if not tasks:
         print("The task list is empty")
@@ -33,6 +35,7 @@ def show_tasks(tasks):
             print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} !!!Overdue!!! by {(today-d_date).days} days ')
         else: print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
 
+#the function will change task.completed to true
 def task_complete(tasks):
     if not tasks:
         print("No tasks available")
@@ -45,6 +48,7 @@ def task_complete(tasks):
     except ValueError:
         return True
 
+#the function will show the user task statistics
 def show_statistics(tasks):
     total_tasks = len(tasks)
     total_completed = sum(task.completed for task in tasks)
@@ -61,6 +65,7 @@ def show_statistics(tasks):
     print(f'Medium task remaining: {total_Medium}')
     print(f'Low task remaining: {total_Low}')
 
+#the function will ask the user how he would like to filter the task list and will filter it accordingly 
 def filter_tasks(tasks):
     filter_menu = {1:"Completed",2:"Incomplete",3:"High priority",4:"Medium priority",5:"Low priority"}
     print(f'Here is the filter options {filter_menu}')
