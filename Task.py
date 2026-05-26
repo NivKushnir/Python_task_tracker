@@ -102,19 +102,30 @@ def show_statistics(tasks):
         print("\n")
 
 
-
-    #added time statistics - תוסיף אחר כך בgit
-
 #the function will ask the user how he would like to filter the task list and will filter it accordingly 
 def filter_tasks(tasks):
-    filter_menu = {1:"Completed",2:"Incomplete",3:"High priority",4:"Medium priority",5:"Low priority"}
+    filter_menu = {1:"Completed",2:"Incomplete",3:"High priority",4:"Medium priority",5:"Low priority",6:"Overdue",7:"due today",8:"due this week"}
     print(f'Here is the filter options {filter_menu}')
     filter_choice = input("What would you like to filter: ")
     filtered_tasks =[]
-    while filter_choice not in ["1","2","3","4","5"]: 
+    today = datetime.now()
+    while filter_choice not in ["1","2","3","4","5","6","7","8"]: 
         print("Invalid choice try again")
         print(f'Here is the filter options {filter_menu}')
         filter_choice = input("What would you like to filter: ")
+        
+    overdue_tasks_list =[]
+    due_today_list =[]
+    tasks_this_week_list=[]
+    for t in tasks:
+        d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
+        if d_date.date() < today.date() and not t.completed:
+            overdue_tasks_list.append(t)
+        elif d_date.date() == today.date() and not t.completed:
+            due_today_list.append(t)
+        elif not t.completed and 0<(d_date-today).days <=7:
+            tasks_this_week_list.append(t)
+    
     if filter_choice == "1":
         for task in tasks:
             if task.completed:
@@ -140,3 +151,9 @@ def filter_tasks(tasks):
             if task.priority == "Low":
                 filtered_tasks.append(task)
         return filtered_tasks
+    elif filter_choice == "6":
+        return overdue_tasks_list
+    elif filter_choice == "7":
+        return due_today_list
+    elif filter_choice =="8":
+        return tasks_this_week_list
