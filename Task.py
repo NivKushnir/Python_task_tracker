@@ -25,13 +25,12 @@ def show_tasks(tasks):
     if not tasks:
         print("The task list is empty")
         return
+    today = datetime.now()
     for t in tasks:
-        today = datetime.now()
         d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
-
         if t.completed:
             print(f'[X] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
-        elif d_date < today and not t.completed:
+        elif d_date.date() < today.date() and not t.completed:
             print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} !!!Overdue!!! by {(today-d_date).days} days ')
         else: print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
 
@@ -58,12 +57,53 @@ def show_statistics(tasks):
     if total_tasks:
         print(f'Completion rate {(total_completed/total_tasks)*100:.1f}%')
     else: print("Comletion rate 0%")
+
     total_High = sum(task.priority == "High" and not task.completed for task in tasks)
     total_Medium = sum(task.priority == "Medium" and not task.completed for task in tasks)
     total_Low = sum(task.priority == "Low" and not task.completed for task in tasks)
     print(f'High task remaining: {total_High}')
     print(f'Medium task remaining: {total_Medium}')
     print(f'Low task remaining: {total_Low}')
+
+    overdue_tasks=0
+    overdue_tasks_list = []
+    due_today=0
+    due_today_list =[]
+    tasks_this_week=0
+    tasks_this_week_list=[]
+    today = datetime.now()
+    for t in tasks:
+        d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
+        if d_date.date() < today.date() and not t.completed:
+            overdue_tasks+=1
+            overdue_tasks_list.append(t)
+        elif d_date.date() == today.date() and not t.completed:
+            due_today+=1
+            due_today_list.append(t)
+        elif not t.completed and 0<(d_date-today).days <=7:
+            tasks_this_week+=1
+            tasks_this_week_list.append(t)
+    print(f'Overdue tasks {overdue_tasks} \n')
+    show_tasks(overdue_tasks_list)
+    print("\n")
+    print(f'Due today : {due_today} tasks \n')
+    show_tasks(due_today_list)
+    print("\n")
+    print(f'Due this week: {tasks_this_week} tasks \n')
+    show_tasks(tasks_this_week_list)
+    print("\n")
+    if overdue_tasks_list:
+        print(f'The longest overdue task is:')
+        show_tasks([min(overdue_tasks_list,key = lambda t:t.due_date)])
+        print("\n")
+    if tasks_this_week_list:
+        print("The closest task is:")
+        show_tasks([min(tasks_this_week_list,key = lambda t:t.due_date)])
+        print("\n")
+
+
+
+    #added time statistics - תוסיף אחר כך בgit
 
 #the function will ask the user how he would like to filter the task list and will filter it accordingly 
 def filter_tasks(tasks):
