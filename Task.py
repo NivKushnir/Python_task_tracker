@@ -114,46 +114,46 @@ def filter_tasks(tasks):
         print(f'Here is the filter options {filter_menu}')
         filter_choice = input("What would you like to filter: ")
         
-    overdue_tasks_list =[]
-    due_today_list =[]
-    tasks_this_week_list=[]
-    for t in tasks:
-        d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
-        if d_date.date() < today.date() and not t.completed:
-            overdue_tasks_list.append(t)
-        elif d_date.date() == today.date() and not t.completed:
-            due_today_list.append(t)
-        elif not t.completed and 0<(d_date-today).days <=7:
-            tasks_this_week_list.append(t)
+    #overdue_tasks_list =[]
+    #due_today_list =[]
+    #tasks_this_week_list=[]
+    #for t in tasks:
+    #    d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
+    #    if d_date.date() < today.date() and not t.completed:
+    #        overdue_tasks_list.append(t)
+    #    elif d_date.date() == today.date() and not t.completed:
+    #        due_today_list.append(t)
+    #    elif not t.completed and 0<(d_date-today).days <=7:
+    #        tasks_this_week_list.append(t)
     
     if filter_choice == "1":
-        for task in tasks:
-            if task.completed:
-                filtered_tasks.append(task)
-        return filtered_tasks
+        #for task in tasks:
+        #    if task.completed:
+        #       filtered_tasks.append(task)
+        return [task for task in tasks if task.completed]
     elif filter_choice == "2":
-        for task in tasks:
-            if not task.completed:
-                filtered_tasks.append(task)
-        return filtered_tasks
+        #for task in tasks:
+        #    if not task.completed:
+        #        filtered_tasks.append(task)
+        return [task for task in tasks if not task.completed]
     elif filter_choice == "3":
-        for task in tasks:
-            if task.priority == "High":
-                filtered_tasks.append(task)
-        return filtered_tasks
+        # for task in tasks:
+        #     if task.priority == "High":
+        #         filtered_tasks.append(task)
+        return [task for task in tasks if task.priority == "High"]
     elif filter_choice == "4":
-        for task in tasks:
-            if task.priority == "Medium":
-                filtered_tasks.append(task)
-        return filtered_tasks
+        #for task in tasks:
+        #    if task.priority == "Medium":
+        #        filtered_tasks.append(task)
+        return [task for task in tasks if task.priority == "Meduim"]
     elif filter_choice == "5":
-        for task in tasks:
-            if task.priority == "Low":
-                filtered_tasks.append(task)
-        return filtered_tasks
+        #for task in tasks:
+        #    if task.priority == "Low":
+        #        filtered_tasks.append(task)
+        return [task for task in tasks if task.priority == "Low"]
     elif filter_choice == "6":
-        return overdue_tasks_list
+        return [task for task in tasks if datetime.strptime(task.due_date,"%Y-%m-%d").date() < today.date() and not task.completed]#overdue_tasks_list
     elif filter_choice == "7":
-        return due_today_list
+        return [task for task in tasks if datetime.strptime(task.due_date,"%Y-%m-%d").date() == today.date() and not task.completed]#due_today_list
     elif filter_choice =="8":
-        return tasks_this_week_list
+        return [task for task in tasks if not task.completed and 0<(datetime.strptime(task.due_date,"%Y-%m-%d").date()-today.date()).days <=7]#tasks_this_week_list
