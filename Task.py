@@ -170,9 +170,9 @@ def edit_task(tasks):
             if not 1<=index<=len(tasks):
                 print("Invalid index")
                 continue
-            print("1: Edit title, 2: Edit priority, 3: Edit due date, 0:Done")
-            edit =-1
+            edit =-1 
             while(edit!=0):
+                print("1: Edit title, 2: Edit priority, 3: Edit due date, 0: Done")
                 try: 
                     edit = int(input("What would you like to edit:"))
                 except ValueError:
@@ -181,6 +181,7 @@ def edit_task(tasks):
                 if not 0<=edit<=3:
                     print("Invalid choice")
                     continue
+
                 elif edit == 1:
                         print(f'Current title: {tasks[index-1].title}')
                         tasks[index-1].title = input("Change title to: ")
@@ -203,6 +204,7 @@ def edit_task(tasks):
                         except ValueError:
                             print("Invalid due date, try again!")
                     tasks[index-1].due_date = d_date
+                print("\n")
             break
     tasks.sort(key=lambda task: (task.completed,task.due_date))
     print("Task changed successfully")           
