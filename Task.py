@@ -145,7 +145,7 @@ def filter_tasks(tasks):
         #for task in tasks:
         #    if task.priority == "Medium":
         #        filtered_tasks.append(task)
-        return [task for task in tasks if task.priority == "Meduim"]
+        return [task for task in tasks if task.priority == "Medium"]
     elif filter_choice == "5":
         #for task in tasks:
         #    if task.priority == "Low":
@@ -157,3 +157,52 @@ def filter_tasks(tasks):
         return [task for task in tasks if datetime.strptime(task.due_date,"%Y-%m-%d").date() == today.date() and not task.completed]#due_today_list
     elif filter_choice =="8":
         return [task for task in tasks if not task.completed and 0<(datetime.strptime(task.due_date,"%Y-%m-%d").date()-today.date()).days <=7]#tasks_this_week_list
+
+def edit_task(tasks):
+    for i, t in enumerate(tasks,start=1):
+        print(i, t.title)
+    while True :
+            try:
+                index = int(input("Which task would you like to edit: "))
+            except ValueError:
+                print("Invalid input")
+                continue
+            if not 1<=index<=len(tasks):
+                print("Invalid index")
+                continue
+            print("1: Edit title, 2: Edit priority, 3: Edit due date, 0:Done")
+            edit =-1
+            while(edit!=0):
+                try: 
+                    edit = int(input("What would you like to edit:"))
+                except ValueError:
+                    print("Invalid input")
+                    continue
+                if not 0<=edit<=3:
+                    print("Invalid choice")
+                    continue
+                elif edit == 1:
+                        print(f'Current title: {tasks[index-1].title}')
+                        tasks[index-1].title = input("Change title to: ")
+                        
+                elif edit == 2:
+                    print(f'Current priority: {tasks[index-1].priority}')
+                    p = input("Changing prority to High/Medium/Low")
+                    while p not in ["High","Medium","Low"]:
+                        p = input("Changing prority to High/Medium/Low")
+                    tasks[index-1].priority = p
+                    
+                elif edit ==3:
+                    print(f'Current due date {tasks[index-1].due_date}')
+                    valid = False
+                    while not valid:
+                        d_date = input("Changing the due date of the task: YYYY-MM-DD ")
+                        try:
+                            datetime.strptime(d_date,"%Y-%m-%d")
+                            valid = True
+                        except ValueError:
+                            print("Invalid due date, try again!")
+                    tasks[index-1].due_date = d_date
+            break
+    tasks.sort(key=lambda task: (task.completed,task.due_date))
+    print("Task changed successfully")           
