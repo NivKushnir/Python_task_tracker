@@ -208,3 +208,22 @@ def edit_task(tasks):
             break
     tasks.sort(key=lambda task: (task.completed,task.due_date))
     print("Task changed successfully")           
+
+def delete_tasks(tasks):
+    for i, t in enumerate(tasks,start=1):
+        print(i, t.title)
+    while(True):
+        try:
+            index = int(input("Which task would you like to delete ,to finish please press 0: "))-1
+        except ValueError:
+            print("Invalid input")
+            continue
+        if not -1<=index<len(tasks):
+                print("Invalid index")
+                continue
+        elif index == -1:
+            break
+        else:
+            d_task = tasks.pop(index)
+            print(f'{d_task.title} deleted successfully')    
+    tasks.sort(key=lambda task: (task.completed,task.due_date))    
