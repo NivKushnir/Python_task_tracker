@@ -22,6 +22,7 @@ def get_valid_date():
             print("Invalid due date, try again!")
     return d_date
 
+#The function will verify the index the user will input
 def get_valid_index(tasks,messge,allow_zero=False):
     while True :
         try:
@@ -29,7 +30,7 @@ def get_valid_index(tasks,messge,allow_zero=False):
         except ValueError:
             print("Invalid input")
             continue
-        
+
         if index == 0 and allow_zero:
             return 0
         
