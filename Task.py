@@ -4,24 +4,24 @@ import Validation as V
 
 #The function will return datetime object of due_date
 def get_due_date(task):
-    return datetime.strptime(task.due_date,"%Y-%m-%d")
+    return datetime.strptime(task.due_date,"%Y-%m-%d").date()
 
 
 #The function will check if a task is overdue
 def is_overdue(task):
-    today = datetime.now()
+    today = datetime.now().date()
     d_date = get_due_date(task)
-    return d_date.date() < today.date() and not task.completed
+    return d_date < today and not task.completed
 
 #The function will check if a task is for today
 def is_due_today(task):
-    today = datetime.now()
+    today = datetime.now().date()
     d_date = get_due_date(task)
-    return d_date.date() == today.date() and not task.completed
+    return d_date == today and not task.completed
 
 #The function will check if the task is for this week
 def is_due_this_week(task):
-    today = datetime.now()
+    today = datetime.now().date()
     d_date = get_due_date(task)
     return not task.completed and 0<(d_date-today).days <=7
 
@@ -91,7 +91,7 @@ def show_tasks(tasks):
         return
     today = datetime.now().date()
     for t in tasks:
-        d_date = get_due_date(t).date()
+        d_date = get_due_date(t)
         if t.completed:
             print(f'[X] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
         elif is_overdue(t):
@@ -105,6 +105,7 @@ def task_complete(tasks):
         return
     index = V.get_valid_index(tasks,"What task number did you complete: ")-1
     tasks[index].completed = True
+    sort_tasks(tasks)
 
 
 #the function will show the user task statistics
@@ -114,18 +115,17 @@ def show_statistics(tasks):
     print(f'Total tasks {total_tasks}')
     print(f'You completed {total_completed} tasks')
     print(f'You have {total_tasks-total_completed} remaining tasks')
-    get_completion_rate(tasks)
+    completion_rate = get_completion_rate(tasks)
+    print(f'Your completion rate is : {completion_rate:.1f}%')
 
-    total_High = count_priority(tasks,"High")
-    total_Medium = count_priority(tasks,"Medium")
-    total_Low = count_priority(tasks,"Low")
-    print(f'High task remaining: {total_High}')
-    print(f'Medium task remaining: {total_Medium}')
-    print(f'Low task remaining: {total_Low}')
+
+    print(f'High task remaining: {count_priority(tasks,"High")}')
+    print(f'Medium task remaining: {count_priority(tasks,"Medium")}')
+    print(f'Low task remaining: {count_priority(tasks,"Low")}')
 
     overdue_tasks= get_overdue_tasks(tasks)
-    due_today= get_due_today(tasks)
-    tasks_this_week=get_due_this_week(tasks)
+    due_today= get_due_today_tasks(tasks)
+    tasks_this_week=get_due_this_week_tasks(tasks)
     print(f'Overdue tasks {len(overdue_tasks)} \n')
     show_tasks(overdue_tasks)
     print("\n")
@@ -135,8 +135,8 @@ def show_statistics(tasks):
     print(f'Due this week: {len(tasks_this_week)} tasks \n')
     show_tasks(tasks_this_week)
     print("\n")
-    get_overdue_task(tasks)
-    get_closest_task(tasks)
+    show_overdue_task(tasks)
+    show_closest_task(tasks)
 
 
 #the function will ask the user how he would like to filter the task list and will filter it accordingly 
@@ -165,13 +165,13 @@ def filter_tasks(tasks):
         return [task for task in tasks if task.priority == "Low"]
     
     elif filter_choice == "6":
-        return [task for task in tasks if is_overdue(task)]#overdue_tasks_list
+        return get_overdue_tasks(tasks)#overdue_tasks_list
     
     elif filter_choice == "7":
-        return [task for task in tasks if is_due_today(task)]#due_today_list
+        return get_due_today_tasks(tasks)#due_today_list
     
     elif filter_choice =="8":
-        return [task for task in tasks if is_due_this_week(task)]#tasks_this_week_list
+        return get_due_this_week_tasks(tasks)#tasks_this_week_list
     
 #The function will allow the user to edit is tasks
 def edit_task(tasks):
