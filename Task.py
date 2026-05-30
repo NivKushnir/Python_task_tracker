@@ -1,36 +1,100 @@
 from Task_C import Task
 from datetime import datetime
+import Validation as V
+
+#The function will return datetime object of due_date
+def get_due_date(task):
+    return datetime.strptime(task.due_date,"%Y-%m-%d")
+
+
+#The function will check if a task is overdue
+def is_overdue(task):
+    today = datetime.now()
+    d_date = get_due_date(task)
+    return d_date.date() < today.date() and not task.completed
+
+#The function will check if a task is for today
+def is_due_today(task):
+    today = datetime.now()
+    d_date = get_due_date(task)
+    return d_date.date() == today.date() and not task.completed
+
+#The function will check if the task is for this week
+def is_due_this_week(task):
+    today = datetime.now()
+    d_date = get_due_date(task)
+    return not task.completed and 0<(d_date-today).days <=7
+
+#The function will return a list with all the tasks which are overdue
+def get_overdue_tasks(tasks):
+    return [task for task in tasks if is_overdue(task)]
+
+#The function will return a list with all the task which are for today
+def get_due_today_tasks(tasks):
+    return [task for task in tasks if is_due_today(task)]
+
+#The function will return a list with all the task which are for this week
+def get_due_this_week_tasks(tasks):
+    return [task for task in tasks if is_due_this_week(task)]
+
+#The function will return a list of all the tasks which are completed
+def get_completed_tasks(tasks):
+    return [task for task in tasks if task.completed]
+
+#The function will return a list of all the tasks which are not completed
+def get_not_completed_tasks(tasks):
+    return [task for task in tasks if not task.completed]
+
+#The function will sort out tasks list
+def sort_tasks(tasks):
+       tasks.sort(key=lambda task: (task.completed,task.due_date))
+
+#The function will return the amount of the wanted priority tasks
+def count_priority(tasks,priority):
+    return sum(task.priority == priority and not task.completed for task in tasks)
+
+#The function will print the completion rate of all the user tasks
+def get_completion_rate(tasks):
+    if len(tasks):
+        return (len(get_completed_tasks(tasks))/len(tasks))*100
+    return 0
+
+#The function will print the longest overdue task
+def show_overdue_task(tasks):
+    overdue_tasks = get_overdue_tasks(tasks)
+    if overdue_tasks:
+        print(f'The longest overdue task is:')
+        show_tasks([min(overdue_tasks,key = lambda t:t.due_date)])
+        print("\n")
+
+#The function will print the closest task of this week
+def show_closest_task(tasks):
+    this_week_tasks =get_due_this_week_tasks(tasks)
+    if this_week_tasks:
+        print(f'The closest task is:')
+        show_tasks([min(this_week_tasks,key = lambda t:t.due_date)])
+        print("\n")
 
 #the fuction will create a task object and will add it to the task list
 def add_task(tasks):
     new_task = input("What task would you like to add: ")
-    p = input("What is the task priority: High/Medium/Low: ")
-    while p not in ["High","Medium","Low"]:
-        p = input("What is the task priority: High/Medium/Low")
-    
-    valid = False
-    while not valid:
-        d_date = input("What is the due date of the task: YYYY-MM-DD ")
-        try:
-            datetime.strptime(d_date,"%Y-%m-%d")
-            valid = True
-        except ValueError:
-            print("Invalid due date, try again!")
+    priority = V.get_valid_priority()
+    d_date = V.get_valid_date()
 
-    tasks.append(Task(new_task,False,p,d_date))
-    tasks.sort(key=lambda task: (task.completed,task.due_date))
+    tasks.append(Task(new_task,False,priority,d_date))
+    sort_tasks(tasks)
 
 #the function will show all the task in the list
 def show_tasks(tasks):
     if not tasks:
         print("The task list is empty")
         return
-    today = datetime.now()
+    today = datetime.now().date()
     for t in tasks:
-        d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
+        d_date = get_due_date(t).date()
         if t.completed:
             print(f'[X] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
-        elif d_date.date() < today.date() and not t.completed:
+        elif is_overdue(t):
             print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} !!!Overdue!!! by {(today-d_date).days} days ')
         else: print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
 
@@ -39,13 +103,9 @@ def task_complete(tasks):
     if not tasks:
         print("No tasks available")
         return
-    try:
-        index = int(input("What task number did you complete: "))-1
-        if 0<= index < len(tasks):
-            tasks[index].completed = True
-            tasks.sort(key=lambda task: (task.completed,task.due_date))
-    except ValueError:
-        return True
+    index = V.get_valid_index(tasks,"What task number did you complete: ")-1
+    tasks[index].completed = True
+
 
 #the function will show the user task statistics
 def show_statistics(tasks):
@@ -54,52 +114,29 @@ def show_statistics(tasks):
     print(f'Total tasks {total_tasks}')
     print(f'You completed {total_completed} tasks')
     print(f'You have {total_tasks-total_completed} remaining tasks')
-    if total_tasks:
-        print(f'Completion rate {(total_completed/total_tasks)*100:.1f}%')
-    else: print("Comletion rate 0%")
+    get_completion_rate(tasks)
 
-    total_High = sum(task.priority == "High" and not task.completed for task in tasks)
-    total_Medium = sum(task.priority == "Medium" and not task.completed for task in tasks)
-    total_Low = sum(task.priority == "Low" and not task.completed for task in tasks)
+    total_High = count_priority(tasks,"High")
+    total_Medium = count_priority(tasks,"Medium")
+    total_Low = count_priority(tasks,"Low")
     print(f'High task remaining: {total_High}')
     print(f'Medium task remaining: {total_Medium}')
     print(f'Low task remaining: {total_Low}')
 
-    overdue_tasks=0
-    overdue_tasks_list = []
-    due_today=0
-    due_today_list =[]
-    tasks_this_week=0
-    tasks_this_week_list=[]
-    today = datetime.now()
-    for t in tasks:
-        d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
-        if d_date.date() < today.date() and not t.completed:
-            overdue_tasks+=1
-            overdue_tasks_list.append(t)
-        elif d_date.date() == today.date() and not t.completed:
-            due_today+=1
-            due_today_list.append(t)
-        elif not t.completed and 0<(d_date-today).days <=7:
-            tasks_this_week+=1
-            tasks_this_week_list.append(t)
-    print(f'Overdue tasks {overdue_tasks} \n')
-    show_tasks(overdue_tasks_list)
+    overdue_tasks= get_overdue_tasks(tasks)
+    due_today= get_due_today(tasks)
+    tasks_this_week=get_due_this_week(tasks)
+    print(f'Overdue tasks {len(overdue_tasks)} \n')
+    show_tasks(overdue_tasks)
     print("\n")
-    print(f'Due today : {due_today} tasks \n')
-    show_tasks(due_today_list)
+    print(f'Due today : {len(due_today)} tasks \n')
+    show_tasks(due_today)
     print("\n")
-    print(f'Due this week: {tasks_this_week} tasks \n')
-    show_tasks(tasks_this_week_list)
+    print(f'Due this week: {len(tasks_this_week)} tasks \n')
+    show_tasks(tasks_this_week)
     print("\n")
-    if overdue_tasks_list:
-        print(f'The longest overdue task is:')
-        show_tasks([min(overdue_tasks_list,key = lambda t:t.due_date)])
-        print("\n")
-    if tasks_this_week_list:
-        print("The closest task is:")
-        show_tasks([min(tasks_this_week_list,key = lambda t:t.due_date)])
-        print("\n")
+    get_overdue_task(tasks)
+    get_closest_task(tasks)
 
 
 #the function will ask the user how he would like to filter the task list and will filter it accordingly 
@@ -107,71 +144,42 @@ def filter_tasks(tasks):
     filter_menu = {1:"Completed",2:"Incomplete",3:"High priority",4:"Medium priority",5:"Low priority",6:"Overdue",7:"due today",8:"due this week"}
     print(f'Here is the filter options {filter_menu}')
     filter_choice = input("What would you like to filter: ")
-    filtered_tasks =[]
-    today = datetime.now()
     while filter_choice not in ["1","2","3","4","5","6","7","8"]: 
         print("Invalid choice try again")
         print(f'Here is the filter options {filter_menu}')
         filter_choice = input("What would you like to filter: ")
         
-    #overdue_tasks_list =[]
-    #due_today_list =[]
-    #tasks_this_week_list=[]
-    #for t in tasks:
-    #    d_date = datetime.strptime(t.due_date,"%Y-%m-%d")
-    #    if d_date.date() < today.date() and not t.completed:
-    #        overdue_tasks_list.append(t)
-    #    elif d_date.date() == today.date() and not t.completed:
-    #        due_today_list.append(t)
-    #    elif not t.completed and 0<(d_date-today).days <=7:
-    #        tasks_this_week_list.append(t)
-    
     if filter_choice == "1":
-        #for task in tasks:
-        #    if task.completed:
-        #       filtered_tasks.append(task)
-        return [task for task in tasks if task.completed]
+        return get_completed_tasks(tasks)
+    
     elif filter_choice == "2":
-        #for task in tasks:
-        #    if not task.completed:
-        #        filtered_tasks.append(task)
-        return [task for task in tasks if not task.completed]
+        return get_not_completed_tasks(tasks)
+    
     elif filter_choice == "3":
-        # for task in tasks:
-        #     if task.priority == "High":
-        #         filtered_tasks.append(task)
         return [task for task in tasks if task.priority == "High"]
+    
     elif filter_choice == "4":
-        #for task in tasks:
-        #    if task.priority == "Medium":
-        #        filtered_tasks.append(task)
         return [task for task in tasks if task.priority == "Medium"]
+    
     elif filter_choice == "5":
-        #for task in tasks:
-        #    if task.priority == "Low":
-        #        filtered_tasks.append(task)
         return [task for task in tasks if task.priority == "Low"]
+    
     elif filter_choice == "6":
-        return [task for task in tasks if datetime.strptime(task.due_date,"%Y-%m-%d").date() < today.date() and not task.completed]#overdue_tasks_list
+        return [task for task in tasks if is_overdue(task)]#overdue_tasks_list
+    
     elif filter_choice == "7":
-        return [task for task in tasks if datetime.strptime(task.due_date,"%Y-%m-%d").date() == today.date() and not task.completed]#due_today_list
+        return [task for task in tasks if is_due_today(task)]#due_today_list
+    
     elif filter_choice =="8":
-        return [task for task in tasks if not task.completed and 0<(datetime.strptime(task.due_date,"%Y-%m-%d").date()-today.date()).days <=7]#tasks_this_week_list
-
+        return [task for task in tasks if is_due_this_week(task)]#tasks_this_week_list
+    
+#The function will allow the user to edit is tasks
 def edit_task(tasks):
     for i, t in enumerate(tasks,start=1):
         print(i, t.title)
     while True :
-            try:
-                index = int(input("Which task would you like to edit: "))
-            except ValueError:
-                print("Invalid input")
-                continue
-            if not 1<=index<=len(tasks):
-                print("Invalid index")
-                continue
-            edit =-1 
-            while(edit!=0):
+            index = V.get_valid_index(tasks,"Which task would you like to edit: ")
+            while True:
                 print("1: Edit title, 2: Edit priority, 3: Edit due date, 0: Done")
                 try: 
                     edit = int(input("What would you like to edit:"))
@@ -182,48 +190,35 @@ def edit_task(tasks):
                     print("Invalid choice")
                     continue
 
+                elif edit == 0:
+                    break
+
                 elif edit == 1:
                         print(f'Current title: {tasks[index-1].title}')
                         tasks[index-1].title = input("Change title to: ")
                         
                 elif edit == 2:
                     print(f'Current priority: {tasks[index-1].priority}')
-                    p = input("Changing prority to High/Medium/Low")
-                    while p not in ["High","Medium","Low"]:
-                        p = input("Changing prority to High/Medium/Low")
-                    tasks[index-1].priority = p
+                    tasks[index-1].priority = V.get_valid_priority()
                     
                 elif edit ==3:
                     print(f'Current due date {tasks[index-1].due_date}')
-                    valid = False
-                    while not valid:
-                        d_date = input("Changing the due date of the task: YYYY-MM-DD ")
-                        try:
-                            datetime.strptime(d_date,"%Y-%m-%d")
-                            valid = True
-                        except ValueError:
-                            print("Invalid due date, try again!")
-                    tasks[index-1].due_date = d_date
+                    tasks[index-1].due_date = V.get_valid_date()
                 print("\n")
+
             break
-    tasks.sort(key=lambda task: (task.completed,task.due_date))
+    sort_tasks(tasks)
     print("Task changed successfully")           
 
+#The function will allow the user to delete his tasks
 def delete_tasks(tasks):
     for i, t in enumerate(tasks,start=1):
         print(i, t.title)
     while(True):
-        try:
-            index = int(input("Which task would you like to delete ,to finish please press 0: "))-1
-        except ValueError:
-            print("Invalid input")
-            continue
-        if not -1<=index<len(tasks):
-                print("Invalid index")
-                continue
-        elif index == -1:
+        index = V.get_valid_index(tasks,"Which task would you like to delete ,to finish please press 0: ",True)
+        if index == 0:
             break
         else:
-            d_task = tasks.pop(index)
+            d_task = tasks.pop(index-1)
             print(f'{d_task.title} deleted successfully')    
-    tasks.sort(key=lambda task: (task.completed,task.due_date))    
+    sort_tasks(tasks)    
