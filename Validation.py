@@ -11,10 +11,10 @@ def get_valid_priority():
         print("Invalid priority")
 
 #The function will verify the due date the user will input
-def get_valid_date():
+def get_valid_date(messege):
     valid = False
     while not valid:
-        d_date = input("What is the due date of the task: YYYY-MM-DD ")
+        d_date = input(messege)
         try:
             datetime.strptime(d_date,"%Y-%m-%d")
             valid = True

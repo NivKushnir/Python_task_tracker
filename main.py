@@ -3,7 +3,7 @@ import Storage as S
 from Task_C import Task
 
 #The trackers menu
-Menu = {1: "Add Task" ,2:"View Tasks" ,3:"Task completed", 4:"Show Statistics" ,5:"Filter Tasks" ,6:"Edit task" ,7:"Delete tasks" ,0:"Exit"}
+Menu = {1: "Add Task" ,2:"View Tasks" ,3:"Task completed", 4:"Show Statistics" ,5:"Filter Tasks" ,6:"Edit task" ,7:"Delete tasks" ,8:"Search tasks" ,0:"Exit"}
 tasks = S.load_tasks() # loadind the json file to a list
 print(Menu)
 choice = input("What would you like to do: ") #getting an input of what the user would like to do
@@ -29,6 +29,8 @@ while(choice!="0"):
         T.edit_task(tasks)
     elif choice == "7":
         T.delete_tasks(tasks)
+    elif choice == "8":
+        T.show_tasks(T.search_tasks(tasks))
     else: print("Not a vaild option")
     print(Menu)
     choice = input("What would you like to do: ")

@@ -79,7 +79,7 @@ def show_closest_task(tasks):
 def add_task(tasks):
     new_task = input("What task would you like to add: ")
     priority = V.get_valid_priority()
-    d_date = V.get_valid_date()
+    d_date = V.get_valid_date("What is the due date of the task:(YYYY-MM-DD) ")
 
     tasks.append(Task(new_task,False,priority,d_date))
     sort_tasks(tasks)
@@ -170,8 +170,9 @@ def filter_tasks(tasks):
     elif filter_choice == "7":
         return get_due_today_tasks(tasks)#due_today_list
     
-    elif filter_choice =="8":
+    elif filter_choice == "8":
         return get_due_this_week_tasks(tasks)#tasks_this_week_list
+    
     
 #The function will allow the user to edit is tasks
 def edit_task(tasks):
@@ -203,7 +204,7 @@ def edit_task(tasks):
                     
                 elif edit ==3:
                     print(f'Current due date {tasks[index-1].due_date}')
-                    tasks[index-1].due_date = V.get_valid_date()
+                    tasks[index-1].due_date = V.get_valid_date("Changing to:(YYYY-MM-DD) ")
                 print("\n")
 
             break
@@ -221,4 +222,40 @@ def delete_tasks(tasks):
         else:
             d_task = tasks.pop(index-1)
             print(f'{d_task.title} deleted successfully')    
-    sort_tasks(tasks)    
+    sort_tasks(tasks)  
+
+
+def search_tasks(tasks):
+    search_menu = {1: "Search by title", 2: "Search by date range", 3: "Search by priority"}
+    print(search_menu)
+    while True:
+        try:
+            search = int(input("How would you like to search: "))
+            if search in search_menu.keys():
+                break
+        except ValueError:
+            pass
+        
+        print("Invalid option, try again")
+
+    if search == 1:
+        keyword = input("Enter a keyword: ").lower()
+        return [task for task in tasks if keyword in task.title.lower()]
+    
+    elif search == 2:
+        low_end_date = datetime.strptime(V.get_valid_date("Your low end of the search (YYYY-MM-DD): "), "%Y-%m-%d").date()
+        high_end_date = datetime.strptime(V.get_valid_date("Your high end of the search (YYYY-MM-DD): "), "%Y-%m-%d").date()
+
+        while high_end_date < low_end_date:
+            print("High end date must be after low end date")
+            high_end_date = datetime.strptime(V.get_valid_date("Your high end of the search (YYYY-MM-DD): "), "%Y-%m-%d").date()
+        
+        return [task for task in tasks if low_end_date <= get_due_date(task) <= high_end_date]
+    
+    elif search == 3:
+        priority = V.get_valid_priority()
+        return [task for task in tasks if task.priority == priority]
+            
+    
+
+
