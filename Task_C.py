@@ -11,3 +11,7 @@ class Task:# a class to collect all the tasks info in one object
     @classmethod
     def from_dict(cls,data):
         return cls(data["title"],data["completed"],data["priority"],data["due_date"])
+    
+    def __str__(self):
+        status = "X" if self.completed else " "
+        return f'[{status}] {self.title} ({self.priority}) - Due date {self.due_date}'

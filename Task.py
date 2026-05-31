@@ -93,10 +93,10 @@ def show_tasks(tasks):
     for t in tasks:
         d_date = get_due_date(t)
         if t.completed:
-            print(f'[X] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
+            print(f'{t} {(d_date-today).days} days left')
         elif is_overdue(t):
-            print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} !!!Overdue!!! by {(today-d_date).days} days ')
-        else: print(f'[ ] {t.title} ({t.priority}) - Due date {t.due_date} {(d_date-today).days} days left')
+            print(f'[{t} !!!Overdue!!! by {(today-d_date).days} days ')
+        else: print(f'{t} {(d_date-today).days} days left')
 
 #the function will change task.completed to true
 def task_complete(tasks):
@@ -177,7 +177,7 @@ def filter_tasks(tasks):
 #The function will allow the user to edit is tasks
 def edit_task(tasks):
     for i, t in enumerate(tasks,start=1):
-        print(i, t.title)
+        print(i, t)
     while True :
             index = V.get_valid_index(tasks,"Which task would you like to edit: ")
             while True:
@@ -214,7 +214,7 @@ def edit_task(tasks):
 #The function will allow the user to delete his tasks
 def delete_tasks(tasks):
     for i, t in enumerate(tasks,start=1):
-        print(i, t.title)
+        print(i, t)
     while(True):
         index = V.get_valid_index(tasks,"Which task would you like to delete ,to finish please press 0: ",True)
         if index == 0:
