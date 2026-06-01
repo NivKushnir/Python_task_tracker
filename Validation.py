@@ -1,5 +1,13 @@
 from datetime import datetime
 
+def is_valid_date(date_str):
+    try:
+        datetime.strptime(date_str,"%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
+
+
 #The function will verify the priority the user will input
 def get_valid_priority():
     while True:
@@ -15,12 +23,9 @@ def get_valid_date(messege):
     valid = False
     while not valid:
         d_date = input(messege)
-        try:
-            datetime.strptime(d_date,"%Y-%m-%d")
-            valid = True
-        except ValueError:
-            print("Invalid due date, try again!")
-    return d_date
+        if is_valid_date(d_date):
+            return d_date
+        print("Invalid date!!, please try again")
 
 #The function will verify the index the user will input
 def get_valid_index(tasks,messge,allow_zero=False):
