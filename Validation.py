@@ -20,8 +20,7 @@ def get_valid_priority():
 
 #The function will verify the due date the user will input
 def get_valid_date(messege):
-    valid = False
-    while not valid:
+    while True:
         d_date = input(messege)
         if is_valid_date(d_date):
             return d_date
