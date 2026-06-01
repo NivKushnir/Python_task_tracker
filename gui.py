@@ -102,6 +102,73 @@ def open_edit_window_gui():
   priority_comb.set(task.priority)
   date_entry.insert(0,task.due_date)
 
+def open_statistics_window():
+  def colse_statistic():
+    statistic_window.destroy()
+  
+  statistic_window = tk.Toplevel(root)
+  statistic_window.title("Edit task")
+  statistic_window.geometry("800x800")
+  title_label = tk.Label(statistic_window,text="Statistics" , font=("Arial",24)) 
+  title_label.pack()
+
+  summery_frame =tk.Frame(statistic_window)
+  summery_frame.pack(fill=tk.X)
+  text_frame = tk.Frame(statistic_window)
+  text_frame.pack(fill=tk.BOTH)
+  button_frame = tk.Frame(statistic_window)
+  button_frame.pack(fill=tk.X, pady=5)
+
+  stat_text = tk.Text(text_frame,font=("Consolas",12),wrap=tk.WORD)
+  stat_text.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+  scrollbar = tk.Scrollbar(text_frame)
+  scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+
+  stat_text.config(yscrollcommand=scrollbar.set)
+  scrollbar.config(command=stat_text.yview)
+
+  total_tasks = len(tasks)
+  completed_total = sum(task.completed for task in tasks)
+
+  tk.Label(summery_frame,text=f'Total tasks: {total_tasks}').pack()
+  tk.Label(summery_frame,text=f'Total completed: {completed_total}').pack()
+  tk.Label(summery_frame,text=f'Tasks left: {total_tasks-completed_total} tasks').pack()
+  tk.Label(summery_frame,text=f'Completiom rate: {T.get_completion_rate(tasks):.1f}%').pack()
+  tk.Label(summery_frame,text = f'High priority tasks left: {T.count_priority(tasks,"High")}').pack()
+  tk.Label(summery_frame,text = f'Medium priority tasks left: {T.count_priority(tasks,"Medium")}').pack()
+  tk.Label(summery_frame,text = f'Low priority tasks left: {T.count_priority(tasks,"Low")}').pack()
+
+  overdue_tasks= T.get_overdue_tasks(tasks)
+  due_today= T.get_due_today_tasks(tasks)
+  tasks_this_week= T.get_due_this_week_tasks(tasks)
+  tk.Label(summery_frame,text = f'Overdue tasks: {len(overdue_tasks)}').pack()
+  tk.Label(summery_frame,text = f'Due today: {len(due_today)} tasks').pack()
+  tk.Label(summery_frame,text = f'Due this week: {len(tasks_this_week)} tasks').pack()
+
+  stat_text.insert(tk.END,"Overdue Tasks:\n")
+  for task in T.get_overdue_tasks(tasks):
+    stat_text.insert(tk.END,f'# {task.title}\n')
+
+  stat_text.insert(tk.END,"\n")
+  stat_text.insert(tk.END, "Due Today:\n")
+  for task in T.get_due_today_tasks(tasks):
+    stat_text.insert(tk.END,f'# {task.title}\n')
+
+  stat_text.insert(tk.END,"\n")
+  stat_text.insert(tk.END, "Due this WEEK:\n")
+  for task in T.get_due_this_week_tasks(tasks):
+    stat_text.insert(tk.END,f'# {task.title}\n')
+  
+  stat_text.insert(tk.END,"\n")
+  stat_text.insert(tk.END, "Closest Task:\n")
+  stat_text.insert(tk.END,f'# {T.get_closest_task(tasks)[0].title}\n')
+
+  stat_text.config(state="disabled")
+
+  ok_stat_button = tk.Button(button_frame,text="OK",command=colse_statistic)
+  ok_stat_button.pack(padx=5,pady=10)
+
+
 
 
 tasks = load_tasks()
@@ -143,6 +210,9 @@ delete_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 edit_button = tk.Button(control_frame,text="Edit task",command=open_edit_window_gui)
 edit_button.pack(side=tk.LEFT,padx=5,pady=5)
+
+statistics_button = tk.Button(control_frame,text="Statistics",command=open_statistics_window)
+statistics_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 refresh_listbox()
 root.mainloop() #the main loop of the progrem
