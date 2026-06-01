@@ -58,21 +58,30 @@ def get_completion_rate(tasks):
     if len(tasks):
         return (len(get_completed_tasks(tasks))/len(tasks))*100
     return 0
+#The function will return the longest overdue task
+def get_longest_overdue_task(tasks):
+    overdue_tasks = get_overdue_tasks(tasks)
+    return [min(overdue_tasks,key = lambda t:t.due_date)]
 
 #The function will print the longest overdue task
 def show_overdue_task(tasks):
-    overdue_tasks = get_overdue_tasks(tasks)
+    overdue_tasks = get_longest_overdue_task(tasks)
     if overdue_tasks:
         print(f'The longest overdue task is:')
-        show_tasks([min(overdue_tasks,key = lambda t:t.due_date)])
+        show_tasks(overdue_tasks)
         print("\n")
+
+#The function will return the closest task from today        
+def get_closest_task(tasks):
+    this_week_tasks =get_due_this_week_tasks(tasks)
+    return [min(this_week_tasks,key = lambda t:t.due_date)]
 
 #The function will print the closest task of this week
 def show_closest_task(tasks):
-    this_week_tasks =get_due_this_week_tasks(tasks)
-    if this_week_tasks:
+    closest_tasks =get_closest_task(tasks)
+    if closest_tasks:
         print(f'The closest task is:')
-        show_tasks([min(this_week_tasks,key = lambda t:t.due_date)])
+        show_tasks(closest_tasks)
         print("\n")
 
 #the fuction will create a task object and will add it to the task list
