@@ -84,6 +84,19 @@ def show_closest_task(tasks):
         show_tasks(closest_tasks)
         print("\n")
 
+#the function will return a list of tasks filterd by title
+def search_by_title(tasks, keyword):
+    return [task for task in tasks if keyword.lower() in task.title.lower()]
+
+#the function will return a list of tasks filterd by priority 
+def search_by_priority(tasks, priority):
+    return [task for task in tasks if task.priority == priority]
+
+#the function will return a list of tasks filterd by date
+def search_by_date_range(tasks, start_date, end_date):
+    return [task for task in tasks if start_date <= get_due_date(task) <= end_date]
+
+
 #the fuction will create a task object and will add it to the task list
 def add_task(tasks):
     new_task = input("What task would you like to add: ")
@@ -249,7 +262,7 @@ def search_tasks(tasks):
 
     if search == 1:
         keyword = input("Enter a keyword: ").lower()
-        return [task for task in tasks if keyword in task.title.lower()]
+        return search_by_title(tasks,keyword)
     
     elif search == 2:
         low_end_date = datetime.strptime(V.get_valid_date("Your low end of the search (YYYY-MM-DD): "), "%Y-%m-%d").date()
@@ -259,11 +272,11 @@ def search_tasks(tasks):
             print("High end date must be after low end date")
             high_end_date = datetime.strptime(V.get_valid_date("Your high end of the search (YYYY-MM-DD): "), "%Y-%m-%d").date()
         
-        return [task for task in tasks if low_end_date <= get_due_date(task) <= high_end_date]
+        return search_by_date_range(tasks,low_end_date,high_end_date)
     
     elif search == 3:
         priority = V.get_valid_priority()
-        return [task for task in tasks if task.priority == priority]
+        return search_by_priority(tasks,priority)
             
     
 
