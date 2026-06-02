@@ -105,6 +105,13 @@ def open_edit_window_gui():
 def open_statistics_window():
   def colse_statistic():
     statistic_window.destroy()
+
+  def add_tasks(text_widget,title,tasks):
+    text_widget.insert(tk.END,f'========== {title} ==========\n')
+    if not tasks:
+      text_widget.insert(tk.END,"!!!NONE!!!\n")
+    for task in tasks:
+      text_widget.insert(tk.END,f'{task.title}\n')
   
   statistic_window = tk.Toplevel(root)
   statistic_window.title("Edit task")
@@ -115,7 +122,7 @@ def open_statistics_window():
   summery_frame =tk.Frame(statistic_window)
   summery_frame.pack(fill=tk.X)
   text_frame = tk.Frame(statistic_window)
-  text_frame.pack(fill=tk.BOTH)
+  text_frame.pack(fill=tk.BOTH,expand=True)
   button_frame = tk.Frame(statistic_window)
   button_frame.pack(fill=tk.X, pady=5)
 
@@ -145,28 +152,22 @@ def open_statistics_window():
   tk.Label(summery_frame,text = f'Due today: {len(due_today)} tasks').pack()
   tk.Label(summery_frame,text = f'Due this week: {len(tasks_this_week)} tasks').pack()
 
-  stat_text.insert(tk.END,"Overdue Tasks:\n")
-  for task in T.get_overdue_tasks(tasks):
-    stat_text.insert(tk.END,f'# {task.title}\n')
+  add_tasks(stat_text,"Overdue Tasks",T.get_overdue_tasks(tasks))
+  stat_text.insert(tk.END,"\n")
 
+  add_tasks(stat_text,"Due Today",T.get_due_today_tasks(tasks))
   stat_text.insert(tk.END,"\n")
-  stat_text.insert(tk.END, "Due Today:\n")
-  for task in T.get_due_today_tasks(tasks):
-    stat_text.insert(tk.END,f'# {task.title}\n')
 
+  add_tasks(stat_text,"Due this week",T.get_due_this_week_tasks(tasks))
   stat_text.insert(tk.END,"\n")
-  stat_text.insert(tk.END, "Due this WEEK:\n")
-  for task in T.get_due_this_week_tasks(tasks):
-    stat_text.insert(tk.END,f'# {task.title}\n')
-  
-  stat_text.insert(tk.END,"\n")
+
   stat_text.insert(tk.END, "Closest Task:\n")
   stat_text.insert(tk.END,f'# {T.get_closest_task(tasks)[0].title}\n')
 
   stat_text.config(state="disabled")
 
   ok_stat_button = tk.Button(button_frame,text="OK",command=colse_statistic)
-  ok_stat_button.pack(padx=5,pady=10)
+  ok_stat_button.pack(pady=10)
 
 
 
