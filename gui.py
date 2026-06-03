@@ -167,7 +167,7 @@ def open_statistics_window():
   add_tasks(stat_text,"Due this week",T.get_due_this_week_tasks(tasks))
   stat_text.insert(tk.END,"\n")
 
-  stat_text.insert(tk.END, "Closest Task:\n")
+  stat_text.insert(tk.END, "========== Closest Task ==========\n")
   stat_text.insert(tk.END,f'# {T.get_closest_task(tasks)[0].title}\n')
 
   stat_text.config(state="disabled")
@@ -177,6 +177,7 @@ def open_statistics_window():
 
 
 def open_search_window():
+  #The function will update the input for each category
   def update_search_input(event=None):
     search_entry.pack_forget()
     p_comb.pack_forget()
@@ -188,7 +189,7 @@ def open_search_window():
     choice = search_comb.get()
 
     if choice == "Title":
-      input_label.config(text="Text:")
+      input_label.config(text="Tittle:")
       input_label.pack()
       search_entry.pack()
 
@@ -204,7 +205,8 @@ def open_search_window():
       end_date_title.config(text="End date")
       end_date_title.pack()
       end_date_entry.pack()
-
+  
+  #The function will perform our search
   def perform_search():
     res_listbox.delete(0,tk.END)
     choice = search_comb.get()
