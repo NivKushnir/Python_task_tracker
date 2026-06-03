@@ -5,6 +5,11 @@ from Storage import load_tasks
 from Task_C import Task
 import Task as T
 import Validation as V
+from datetime import  datetime
+
+#The function will show Error msg
+def show_error(msg):
+  messagebox.showerror("Error", msg)
 
 #Refreshes all the tasks we have in the listbox
 def refresh_listbox():
@@ -56,11 +61,11 @@ def open_edit_window_gui():
     due_date = date_entry.get().strip()
 
     if not title:
-      messagebox.showerror("Error", "Title cannot be empty")
+      show_error("Title cannot be empty")
       return
     
     if not V.is_valid_date(due_date):
-      messagebox.showerror("Error", "Date must be YYYY-MM-DD")
+      show_error("Date must be YYYY-MM-DD")
       return
     
     task.due_date=due_date
@@ -102,6 +107,7 @@ def open_edit_window_gui():
   priority_comb.set(task.priority)
   date_entry.insert(0,task.due_date)
 
+#The function will open awindow with all the user statistics
 def open_statistics_window():
   def colse_statistic():
     statistic_window.destroy()
@@ -114,7 +120,7 @@ def open_statistics_window():
       text_widget.insert(tk.END,f'{task.title}\n')
   
   statistic_window = tk.Toplevel(root)
-  statistic_window.title("Edit task")
+  statistic_window.title("Statistics")
   statistic_window.geometry("800x800")
   title_label = tk.Label(statistic_window,text="Statistics" , font=("Arial",24)) 
   title_label.pack()
@@ -170,6 +176,123 @@ def open_statistics_window():
   ok_stat_button.pack(pady=10)
 
 
+def open_search_window():
+  def update_search_input(event=None):
+    search_entry.pack_forget()
+    p_comb.pack_forget()
+    start_date_entry.pack_forget()
+    end_date_entry.pack_forget()
+    input_label.pack_forget()
+    end_date_title.pack_forget()
+
+    choice = search_comb.get()
+
+    if choice == "Title":
+      input_label.config(text="Text:")
+      input_label.pack()
+      search_entry.pack()
+
+    elif choice == "Priority":
+      input_label.config(text="Priority:")
+      input_label.pack()
+      p_comb.pack()
+    
+    elif choice == "Date":
+      input_label.config(text="Start date:")
+      input_label.pack()
+      start_date_entry.pack()
+      end_date_title.config(text="End date")
+      end_date_title.pack()
+      end_date_entry.pack()
+
+  def perform_search():
+    res_listbox.delete(0,tk.END)
+    choice = search_comb.get()
+
+    if choice == "Title":
+      keyword = search_entry.get().strip()
+      if not keyword:
+        show_error("Search text cannot br empty!")
+        return
+      
+      res = T.search_by_title(tasks,keyword)
+
+    elif choice == "Priority":
+      p = p_comb.get()
+      if not p:
+        show_error("Please select a priority!")
+        return
+      
+      res = T.search_by_priority(tasks,p)
+
+    elif choice == "Date":
+      start_date = start_date_entry.get().strip()
+      end_date = end_date_entry.get().strip()
+      
+      if not V.is_valid_date(start_date):
+        show_error("Start date must be YYYY-MM-DD!")
+        return
+      
+      if not V.is_valid_date(end_date):
+        show_error("End date must be YYYY-MM-DD")
+        return
+      
+      start_date = datetime.strptime(start_date,"%Y-%m-%d").date()
+      end_date = datetime.strptime(end_date,"%Y-%m-%d").date()
+
+      if end_date<start_date:
+        show_error("End date must be after start date")
+        return
+      
+      res = T.search_by_date_range(tasks,start_date,end_date)
+    
+    for task in res:
+      res_listbox.insert(tk.END,str(task))
+
+
+
+
+  search_window = tk.Toplevel(root)
+  search_window.title("Search Tasks")
+  search_window.geometry("500x400")
+  title_label = tk.Label(search_window,text="Search" , font=("Arial",24)) 
+  title_label.pack()
+
+
+  search_comb = ttk.Combobox(search_window,values=["Title","Priority","Date"], state= "readonly")
+  tk.Label(search_window,text="Search by: ").pack()
+  search_comb.pack()
+
+  input_frame = tk.Frame(search_window)
+  input_frame.pack()
+
+  input_label = tk.Label(input_frame,text="")
+  end_date_title = tk.Label(input_frame,text="")
+  search_entry = tk.Entry(input_frame)
+  p_comb = ttk.Combobox(input_frame,values=["High","Medium","Low"], state= "readonly")
+  start_date_entry = tk.Entry(input_frame)
+  end_date_entry = tk.Entry(input_frame)
+  search_comb.bind("<<ComboboxSelected>>",update_search_input)
+  search_comb.current(0)
+  update_search_input() 
+
+  res_search_button =tk.Button(search_window,text="Search",command = perform_search)
+  res_search_button.pack(pady=5)
+
+  res_frame = tk.Frame(search_window)
+  res_frame.pack(fill=tk.BOTH,expand=True,padx=5,pady=5)
+
+  res_listbox=tk.Listbox(res_frame,font=("Consolas",12))
+  res_listbox.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+
+  res_scrollbar = tk.Scrollbar(res_frame)
+  res_scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+
+  res_listbox.config(yscrollcommand=res_scrollbar.set)
+
+  res_scrollbar.config(command=res_listbox.yview)
+
+  
 
 
 tasks = load_tasks()
@@ -214,6 +337,9 @@ edit_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 statistics_button = tk.Button(control_frame,text="Statistics",command=open_statistics_window)
 statistics_button.pack(side=tk.LEFT,padx=5,pady=5)
+
+search_button = tk.Button(control_frame,text="Search",command=open_search_window)
+search_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 refresh_listbox()
 root.mainloop() #the main loop of the progrem
