@@ -85,8 +85,10 @@ def delete_task_gui():
     return
   
   index = selected[0]
-  tasks.pop(index)
-  T.sort_tasks(tasks)
+  d_task=tasks[index]
+  if messagebox.askyesno("Delete Task",f"Delete '{d_task.title}'?"):
+    tasks.pop(index)
+    T.sort_tasks(tasks)
   refresh_listbox()
 
 #The function will open a designated window for the user to edit the task
