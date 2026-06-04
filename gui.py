@@ -293,7 +293,7 @@ def open_search_window():
 
   search_window = tk.Toplevel(root)
   search_window.title("Search Tasks")
-  search_window.geometry("500x400")
+  search_window.geometry("500x250")
   title_label = tk.Label(search_window,text="Search" , font=("Arial",24)) 
   title_label.pack()
 
