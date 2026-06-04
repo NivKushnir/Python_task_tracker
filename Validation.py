@@ -43,3 +43,13 @@ def get_valid_index(tasks,messge,allow_zero=False):
             continue
 
         return index
+
+#The function will verify the category the user will input
+def get_valid_category():
+    while True:
+        p = input("What is the task Category: Study/Work/Personal/Health/Programming").strip().capitalize()
+
+        if p in ["Study","Work","Personal","Health","Programming"]:
+            return p
+
+        print("Invalid Category")

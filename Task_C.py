@@ -1,17 +1,19 @@
 class Task:# a class to collect all the tasks info in one object
-    def __init__(self,title,completed,priority,due_date):
+    def __init__(self,title,completed,priority,due_date,category):
         self.title = title
         self.completed = completed
         self.priority = priority
         self.due_date = due_date
+        self.category = category
+
     #the function will convert the object to a dict
     def to_dict(self):
-        return {"title": self.title, "completed": self.completed,"priority": self.priority,"due_date": self.due_date}
+        return {"title": self.title, "completed": self.completed,"priority": self.priority,"due_date": self.due_date,"category": self.category}
     #the function will convert a dict to the object
     @classmethod
     def from_dict(cls,data):
-        return cls(data["title"],data["completed"],data["priority"],data["due_date"])
+        return cls(data["title"],data["completed"],data["priority"],data["due_date"],data.get("category","Personal"))
     
     def __str__(self):
         status = "X" if self.completed else " "
-        return f'[{status}] {self.title} ({self.priority}) - Due date {self.due_date}'
+        return f'[{status}] {self.title} ({self.priority}) - Due date {self.due_date} [{self.category}]'

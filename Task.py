@@ -53,6 +53,10 @@ def sort_tasks(tasks):
 def count_priority(tasks,priority):
     return sum(task.priority == priority and not task.completed for task in tasks)
 
+#The function will return the amount of the wanted category tasks
+def count_category(tasks,category):
+    return sum(task.category == category and not task.completed for task in tasks)
+
 #The function will print the completion rate of all the user tasks
 def get_completion_rate(tasks):
     if len(tasks):
@@ -96,14 +100,18 @@ def search_by_priority(tasks, priority):
 def search_by_date_range(tasks, start_date, end_date):
     return [task for task in tasks if start_date <= get_due_date(task) <= end_date]
 
+#the function will return a list of tasks filterd by category
+def search_by_category(tasks,category):
+    return [task for task in tasks if task.category == category]
 
 #the fuction will create a task object and will add it to the task list
 def add_task(tasks):
     new_task = input("What task would you like to add: ")
     priority = V.get_valid_priority()
     d_date = V.get_valid_date("What is the due date of the task:(YYYY-MM-DD) ")
+    cat = V.get_valid_category()
 
-    tasks.append(Task(new_task,False,priority,d_date))
+    tasks.append(Task(new_task,False,priority,d_date,cat))
     sort_tasks(tasks)
 
 #the function will show all the task in the list
@@ -140,10 +148,15 @@ def show_statistics(tasks):
     completion_rate = get_completion_rate(tasks)
     print(f'Your completion rate is : {completion_rate:.1f}%')
 
-
     print(f'High task remaining: {count_priority(tasks,"High")}')
     print(f'Medium task remaining: {count_priority(tasks,"Medium")}')
     print(f'Low task remaining: {count_priority(tasks,"Low")}')
+
+    print(f'Study tasks remaining: {count_category(tasks,"Study")}')
+    print(f'Work tasks remaining: {count_category(tasks,"Work")}')
+    print(f'Personal tasks remaining: {count_category(tasks,"Personal")}')
+    print(f'Health tasks remaining: {count_category(tasks,"Health")}')
+    print(f'Programming tasks remaining: {count_category(tasks,"Programming")}')
 
     overdue_tasks= get_overdue_tasks(tasks)
     due_today= get_due_today_tasks(tasks)

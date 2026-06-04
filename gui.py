@@ -38,6 +38,7 @@ def open_add_window():
     title = title_entry.get().strip()
     priority = priority_comb.get()
     due_date = date_entry.get().strip()
+    category = category_comb.get()
 
     if not title:
       show_error("Title cannot be empty")
@@ -47,7 +48,7 @@ def open_add_window():
       show_error("Date must be YYYY-MM-DD")
       return
     
-    tasks.append(Task(title,False,priority,due_date))
+    tasks.append(Task(title,False,priority,due_date,category))
     T.sort_tasks(tasks)
     
     messagebox.showinfo("Success","Task added successfully")
@@ -64,6 +65,8 @@ def open_add_window():
   date_entry = tk.Entry(add_window)
   priority_comb = ttk.Combobox(add_window,values=["High","Medium","Low"], state= "readonly")
   priority_comb.current(1)
+  category_comb = ttk.Combobox(add_window,values=["Study","Work","Personal","Health","Programming"],state="readonly")
+  category_comb.current(0)
   save_button = tk.Button(add_window,text="Save",command=save_changes)
 
   tk.Label(add_window,text="Title:").pack()
@@ -74,6 +77,9 @@ def open_add_window():
 
   tk.Label(add_window,text="Due date:").pack()
   date_entry.pack()
+
+  tk.Label(add_window,text="Category:").pack()
+  category_comb.pack()
 
   save_button.pack(pady=10)
 
@@ -110,6 +116,7 @@ def open_edit_window_gui(event=None):
     title = title_entry.get().strip()
     priority = priority_comb.get()
     due_date = date_entry.get().strip()
+    category = category_comb.get()
 
     if not title:
       show_error("Title cannot be empty")
@@ -122,6 +129,7 @@ def open_edit_window_gui(event=None):
     task.due_date=due_date
     task.title=title
     task.priority = priority
+    task.category = category
 
     refresh_listbox()
     edit_window.destroy()
@@ -141,6 +149,7 @@ def open_edit_window_gui(event=None):
   title_entry = tk.Entry(edit_window)
   date_entry = tk.Entry(edit_window)
   priority_comb = ttk.Combobox(edit_window,values=["High","Medium","Low"], state= "readonly")
+  category_comb = ttk.Combobox(edit_window,values=["Study","Work","Personal","Health","Programming"],state="readonly")
   save_button = tk.Button(edit_window,text="Save",command=save_changes)
 
   tk.Label(edit_window,text="Title:").pack()
@@ -152,17 +161,19 @@ def open_edit_window_gui(event=None):
   tk.Label(edit_window,text="Due date:").pack()
   date_entry.pack()
 
+  tk.Label(edit_window,text="Category:").pack()
+  category_comb.pack()
+
   save_button.pack(side=tk.LEFT,padx=5,pady=5)
 
   title_entry.insert(0,task.title)
   priority_comb.set(task.priority)
   date_entry.insert(0,task.due_date)
+  category_comb.set(task.category)
 
 #The function will open awindow with all the user statistics
 def open_statistics_window():
-  def colse_statistic():
-    statistic_window.destroy()
-
+  #The function will add the tasks to a listbox
   def add_tasks(text_widget,title,tasks):
     text_widget.insert(tk.END,f'========== {title} ==========\n')
     if not tasks:
@@ -172,7 +183,7 @@ def open_statistics_window():
   
   statistic_window = tk.Toplevel(root)
   statistic_window.title("Statistics")
-  statistic_window.geometry("800x800")
+  statistic_window.geometry("800x1000")
   title_label = tk.Label(statistic_window,text="Statistics" , font=("Arial",24)) 
   title_label.pack()
 
@@ -180,8 +191,6 @@ def open_statistics_window():
   summery_frame.pack(fill=tk.X)
   text_frame = tk.Frame(statistic_window)
   text_frame.pack(fill=tk.BOTH,expand=True)
-  button_frame = tk.Frame(statistic_window)
-  button_frame.pack(fill=tk.X, pady=5)
 
   stat_text = tk.Text(text_frame,font=("Consolas",12),wrap=tk.WORD)
   stat_text.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
@@ -206,6 +215,12 @@ def open_statistics_window():
   tk.Label(summery_frame,text = f'Medium priority tasks left: {T.count_priority(tasks,"Medium")}').pack()
   tk.Label(summery_frame,text = f'Low priority tasks left: {T.count_priority(tasks,"Low")}').pack()
 
+  tk.Label(summery_frame,text = f'Study category tasks left: {T.count_category(tasks,"Study")}').pack()
+  tk.Label(summery_frame,text = f'Work category tasks left: {T.count_category(tasks,"Work")}').pack()
+  tk.Label(summery_frame,text = f'Personal category tasks left: {T.count_category(tasks,"Personal")}').pack()
+  tk.Label(summery_frame,text = f'Health category tasks left: {T.count_category(tasks,"Health")}').pack()
+  tk.Label(summery_frame,text = f'Programming category tasks left: {T.count_category(tasks,"Programming")}').pack()
+
   overdue_tasks= T.get_overdue_tasks(tasks)
   due_today= T.get_due_today_tasks(tasks)
   tasks_this_week= T.get_due_this_week_tasks(tasks)
@@ -222,13 +237,10 @@ def open_statistics_window():
   add_tasks(stat_text,"Due this week",T.get_due_this_week_tasks(tasks))
   stat_text.insert(tk.END,"\n")
 
-  stat_text.insert(tk.END, "========== Closest Task ==========\n")
-  stat_text.insert(tk.END,f'# {T.get_closest_task(tasks)[0].title}\n')
+  add_tasks(stat_text,"Closest Task",T.get_closest_task(tasks))
+  stat_text.insert(tk.END,"\n")
 
   stat_text.config(state="disabled")
-
-  ok_stat_button = tk.Button(button_frame,text="OK",command=colse_statistic)
-  ok_stat_button.pack(pady=10)
 
 
 def open_search_window():
@@ -240,6 +252,7 @@ def open_search_window():
     end_date_entry.pack_forget()
     input_label.pack_forget()
     end_date_title.pack_forget()
+    category_comb.pack_forget()
 
     choice = search_comb.get()
 
@@ -257,9 +270,14 @@ def open_search_window():
       input_label.config(text="Start date:")
       input_label.pack()
       start_date_entry.pack()
-      end_date_title.config(text="End date")
+      end_date_title.config(text="End date:")
       end_date_title.pack()
       end_date_entry.pack()
+    
+    elif choice == "Category":
+      input_label.config(text="Category:")
+      input_label.pack()
+      category_comb.pack()
   
   #The function will perform our search
   def perform_search():
@@ -303,13 +321,21 @@ def open_search_window():
       
       res = T.search_by_date_range(tasks,start_date,end_date)
     
+    elif choice =="Category":
+      c = category_comb.get()
+      if not c:
+        show_error("Please select a category!")
+        return
+      
+      res = T.search_by_category(tasks,c)
+
+
     if not res:
       messagebox.showinfo("Search","No matching tasks found")
       return
     
     for task in res:
       res_listbox.insert(tk.END,str(task))
-
 
 
 
@@ -320,7 +346,7 @@ def open_search_window():
   title_label.pack()
 
 
-  search_comb = ttk.Combobox(search_window,values=["Title","Priority","Date"], state= "readonly")
+  search_comb = ttk.Combobox(search_window,values=["Title","Priority","Date","Category"], state= "readonly")
   tk.Label(search_window,text="Search by: ").pack()
   search_comb.pack()
 
@@ -333,6 +359,7 @@ def open_search_window():
   p_comb = ttk.Combobox(input_frame,values=["High","Medium","Low"], state= "readonly")
   start_date_entry = tk.Entry(input_frame)
   end_date_entry = tk.Entry(input_frame)
+  category_comb = ttk.Combobox(input_frame,values=["Study","Work","Personal","Health","Programming"],state="readonly")
   search_comb.bind("<<ComboboxSelected>>",update_search_input)
   search_comb.current(0)
   update_search_input() 
