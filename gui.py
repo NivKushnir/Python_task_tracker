@@ -20,8 +20,16 @@ def show_error(msg):
 def refresh_listbox():
   task_listbox.delete(0,tk.END)
 
+  if not tasks:
+    task_listbox.insert(tk.END,"No tasks available")
+
   for task in tasks:
     task_listbox.insert(tk.END,str(task))
+    index = task_listbox.size()-1
+    if tasks[index].completed:
+      task_listbox.itemconfig(index,foreground ="green")
+    elif T.is_overdue(tasks[index]):
+      task_listbox.itemconfig(index,foreground ="red")
 
 #The function will open a window for the user to add tasks
 def open_add_window(): 
