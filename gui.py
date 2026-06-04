@@ -287,6 +287,10 @@ def open_search_window():
       
       res = T.search_by_date_range(tasks,start_date,end_date)
     
+    if not res:
+      messagebox.showinfo("Search","No matching tasks found")
+      return
+    
     for task in res:
       res_listbox.insert(tk.END,str(task))
 
