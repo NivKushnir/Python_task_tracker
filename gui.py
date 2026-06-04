@@ -193,11 +193,15 @@ def open_statistics_window():
 
   total_tasks = len(tasks)
   completed_total = sum(task.completed for task in tasks)
+  completion_rate = T.get_completion_rate(tasks)
 
   tk.Label(summery_frame,text=f'Total tasks: {total_tasks}').pack()
   tk.Label(summery_frame,text=f'Total completed: {completed_total}').pack()
   tk.Label(summery_frame,text=f'Tasks left: {total_tasks-completed_total} tasks').pack()
-  tk.Label(summery_frame,text=f'Completiom rate: {T.get_completion_rate(tasks):.1f}%').pack()
+  tk.Label(summery_frame,text=f'Completiom rate: {completion_rate:.1f}%').pack()
+  progress = ttk.Progressbar(summery_frame,orient="horizontal",length=300,mode="determinate")
+  progress["value"]=completion_rate
+  progress.pack(pady=5)
   tk.Label(summery_frame,text = f'High priority tasks left: {T.count_priority(tasks,"High")}').pack()
   tk.Label(summery_frame,text = f'Medium priority tasks left: {T.count_priority(tasks,"Medium")}').pack()
   tk.Label(summery_frame,text = f'Low priority tasks left: {T.count_priority(tasks,"Low")}').pack()
