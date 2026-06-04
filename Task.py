@@ -78,6 +78,8 @@ def show_overdue_task(tasks):
 #The function will return the closest task from today        
 def get_closest_task(tasks):
     this_week_tasks =get_due_this_week_tasks(tasks)
+    if not this_week_tasks:
+        return
     return [min(this_week_tasks,key = lambda t:t.due_date)]
 
 #The function will print the closest task of this week
