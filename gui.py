@@ -1,11 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from Storage import load_tasks
+from Storage import load_tasks,save_tasks
 from Task_C import Task
 import Task as T
 import Validation as V
 from datetime import  datetime
+
+def on_closing():
+  save_tasks(tasks)
+  root.destroy()
 
 #The function will show Error msg
 def show_error(msg):
@@ -17,16 +21,49 @@ def refresh_listbox():
 
   for task in tasks:
     task_listbox.insert(tk.END,str(task))
-  
-#will allow the user to add tasks
-def add_task_gui():
-   task_name = task_entry.get().strip()
-   if not task_name:
-    return
-   new_task = Task("Checking GUI",False,"Medium","2026-07-31")
-   tasks.append(new_task)
-   refresh_listbox()
-   task_entry.delete(0,tk.END)
+
+def open_add_window(): 
+  #the function will allow us to save the changes
+  def save_changes():
+    title = title_entry.get().strip()
+    priority = priority_comb.get()
+    due_date = date_entry.get().strip()
+
+    if not title:
+      show_error("Title cannot be empty")
+      return
+    
+    if not V.is_valid_date(due_date):
+      show_error("Date must be YYYY-MM-DD")
+      return
+    
+    tasks.append(Task(title,False,priority,due_date))
+    T.sort_tasks(tasks)
+
+    refresh_listbox()
+    add_window.destroy()
+
+
+  add_window = tk.Toplevel(root)
+  add_window.title("Add Task")
+  add_window.geometry("300x200")
+
+  title_entry = tk.Entry(add_window)
+  date_entry = tk.Entry(add_window)
+  priority_comb = ttk.Combobox(add_window,values=["High","Medium","Low"], state= "readonly")
+  priority_comb.current(1)
+  save_button = tk.Button(add_window,text="Save",command=save_changes)
+
+  tk.Label(add_window,text="Title:").pack()
+  title_entry.pack()
+
+  tk.Label(add_window,text="Priority:").pack()
+  priority_comb.pack()
+
+  tk.Label(add_window,text="Due date:").pack()
+  date_entry.pack()
+
+  save_button.pack(pady=10)
 
 #The function will mark tasks as completed
 def completed_task_gui():
@@ -295,7 +332,7 @@ def open_search_window():
   res_scrollbar.config(command=res_listbox.yview)
 
   
-
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 tasks = load_tasks()
 
@@ -321,11 +358,7 @@ scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
 task_listbox.config(yscrollcommand=scrollbar.set)
 scrollbar.config(command=task_listbox.yview)
 
-
-task_entry = tk.Entry(control_frame)
-task_entry.pack(side=tk.LEFT,padx=5,pady=5)
-
-add_button = tk.Button(control_frame,text="Add task",command= add_task_gui)
+add_button = tk.Button(control_frame,text="Add task",command= open_add_window)
 add_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 completed_button = tk.Button(control_frame,text="Complete task",command=completed_task_gui)
@@ -344,4 +377,7 @@ search_button = tk.Button(control_frame,text="Search",command=open_search_window
 search_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 refresh_listbox()
+
+root.protocol("WM_DELETE_WINDOW",on_closing)
+
 root.mainloop() #the main loop of the progrem
