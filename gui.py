@@ -7,6 +7,7 @@ import Task as T
 import Validation as V
 from datetime import  datetime
 
+#The function will save the tasks list as a JSON file
 def on_closing():
   save_tasks(tasks)
   root.destroy()
@@ -22,6 +23,7 @@ def refresh_listbox():
   for task in tasks:
     task_listbox.insert(tk.END,str(task))
 
+#The function will open a window for the user to add tasks
 def open_add_window(): 
   #the function will allow us to save the changes
   def save_changes():
