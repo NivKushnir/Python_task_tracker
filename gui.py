@@ -39,6 +39,8 @@ def open_add_window():
     
     tasks.append(Task(title,False,priority,due_date))
     T.sort_tasks(tasks)
+    
+    messagebox.showinfo("Success","Task added successfully")
 
     refresh_listbox()
     add_window.destroy()
