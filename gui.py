@@ -94,7 +94,7 @@ def delete_task_gui():
   refresh_listbox()
 
 #The function will open a designated window for the user to edit the task
-def open_edit_window_gui():
+def open_edit_window_gui(event=None):
   #the function will allow us to save the changes
   def save_changes():
     title = title_entry.get().strip()
@@ -359,6 +359,7 @@ control_frame.pack(fill=tk.X)
 
 task_listbox = tk.Listbox(list_frame,font=("Consolas",12))
 task_listbox.pack(side=tk.LEFT,fill=tk.BOTH,expand=True,padx=5,pady=5)
+task_listbox.bind("<Double-Button-1>",open_edit_window_gui)
 
 scrollbar = tk.Scrollbar(list_frame)
 scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
