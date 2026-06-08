@@ -31,63 +31,56 @@ def refresh_listbox(tasks):
     elif T.is_overdue(task):
       task_listbox.itemconfig(index,foreground ="red")
 
-def apply_sort(event=None):
-  sort_choice = sort_combobox.get()
-
-  if sort_choice =="Due date":
-    T.sort_tasks(tasks)
-  
-  elif sort_choice == "Priority":
-    T.sort_tasks(tasks,"Priority")
-  
-  elif sort_choice == "Title":
-    T.sort_tasks(tasks,"Title")
-
-  elif sort_choice == "Category":
-    T.sort_tasks(tasks,"Category")
-  
-  refresh_listbox(tasks)
-
-
-#The function will show only the task we filterd
-def show_filterd(event=None):
+#The function will update the view of tasks
+def update_view(event = None):
+  filtered_tasks = tasks.copy()
   filter_choice = filter_combobx.get()
 
-  if filter_choice == "All":
-    refresh_listbox(tasks)
-  
   if filter_choice == "Completed":
-    refresh_listbox(T.get_completed_tasks(tasks))
+    filtered_tasks = T.get_completed_tasks(tasks)
 
-  if filter_choice == "Pending":
-    refresh_listbox(T.get_not_completed_tasks(tasks))
+  elif filter_choice == "Pending":
+    filtered_tasks = T.get_not_completed_tasks(tasks)
 
-  if filter_choice == "High Priority":
-    refresh_listbox(T.get_priority_tasks(tasks,"High"))
+  elif filter_choice == "High Priority":
+    filtered_tasks = T.get_priority_tasks(tasks,"High")
 
-  if filter_choice == "Medium Priority":
-    refresh_listbox(T.get_priority_tasks(tasks,"Medium"))
+  elif filter_choice == "Medium Priority":
+    filtered_tasks = T.get_priority_tasks(tasks,"Medium")
 
-  if filter_choice == "Low Priority":
-    refresh_listbox(T.get_priority_tasks(tasks,"Low"))
+  elif filter_choice == "Low Priority":
+    filtered_tasks = T.get_priority_tasks(tasks,"Low")
 
-  if filter_choice == "Study":
-    refresh_listbox(T.get_category_tasks(tasks,"Study"))
+  elif filter_choice == "Study":
+    filtered_tasks = T.get_category_tasks(tasks,"Study")
 
-  if filter_choice == "Work":
-    refresh_listbox(T.get_category_tasks(tasks,"Work"))
+  elif filter_choice == "Work":
+    filtered_tasks = T.get_category_tasks(tasks,"Work")
 
-  if filter_choice == "Personal":
-    refresh_listbox(T.get_category_tasks(tasks,"Personal"))
+  elif filter_choice == "Personal":
+    filtered_tasks = T.get_category_tasks(tasks,"Personal")
 
-  if filter_choice == "Health":
-    refresh_listbox(T.get_category_tasks(tasks,"Health"))
+  elif filter_choice == "Health":
+    filtered_tasks = T.get_category_tasks(tasks,"Health")
 
-  if filter_choice == "Programming":
-    refresh_listbox(T.get_category_tasks(tasks,"Programming"))
-
+  elif filter_choice == "Programming":
+    filtered_tasks = T.get_category_tasks(tasks,"Programming")
   
+  ########################
+  sort_choice = sort_combobox.get()
+  if sort_choice =="Due date":
+    T.sort_tasks(filtered_tasks)
+  
+  elif sort_choice == "Priority":
+    T.sort_tasks(filtered_tasks,"Priority")
+  
+  elif sort_choice == "Title":
+    T.sort_tasks(filtered_tasks,"Title")
 
+  elif sort_choice == "Category":
+    T.sort_tasks(filtered_tasks,"Category")
+  
+  refresh_listbox(filtered_tasks)
 
 
 #The function will open a window for the user to add tasks
@@ -459,13 +452,13 @@ title_label.pack() #puts the label on the window
 filter_combobx = ttk.Combobox(root,values=["All","Completed","Pending","High Priority","Medium Priority","Low Priority","Study","Work","Personal","Health","Programming"], state= "readonly")
 filter_combobx.current(0)
 tk.Label(root,text="Filter:").pack()
-filter_combobx.bind("<<ComboboxSelected>>",show_filterd)
+filter_combobx.bind("<<ComboboxSelected>>",update_view)
 filter_combobx.pack()
 
 sort_combobox = ttk.Combobox(root,values=["Due date","Priority","Title","Category"],state="readonly")
 sort_combobox.current(0)
 tk.Label(root,text="Sort By:").pack()
-sort_combobox.bind("<<ComboboxSelected>>",apply_sort)
+sort_combobox.bind("<<ComboboxSelected>>",update_view)
 sort_combobox.pack()
 
 list_frame = tk.Frame(root)
