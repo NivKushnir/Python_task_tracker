@@ -90,6 +90,14 @@ def show_closest_task(tasks):
         show_tasks(closest_tasks)
         print("\n")
 
+#The function will return all the tasks with the wanted priority
+def get_priority_tasks(tasks,priority):
+    return [task for task in tasks if task.priority == priority]
+
+#The function will return all the tasks with High priority
+def get_category_tasks(tasks,category):
+    return [task for task in tasks if task.category == category]
+
 #the function will return a list of tasks filterd by title
 def search_by_title(tasks, keyword):
     return [task for task in tasks if keyword.lower() in task.title.lower()]

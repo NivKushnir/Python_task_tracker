@@ -17,7 +17,7 @@ def show_error(msg):
   messagebox.showerror("Error", msg)
 
 #Refreshes all the tasks we have in the listbox
-def refresh_listbox():
+def refresh_listbox(tasks):
   task_listbox.delete(0,tk.END)
 
   if not tasks:
@@ -28,10 +28,51 @@ def refresh_listbox():
   for task in tasks:
     task_listbox.insert(tk.END,str(task))
     index = task_listbox.size()-1
-    if tasks[index].completed:
+    if task.completed:
       task_listbox.itemconfig(index,foreground ="green")
-    elif T.is_overdue(tasks[index]):
+    elif T.is_overdue(task):
       task_listbox.itemconfig(index,foreground ="red")
+
+
+def show_filterd(event=None):
+  filter_choice = filter_combobx.get()
+
+  if filter_choice == "All":
+    refresh_listbox(tasks)
+  
+  if filter_choice == "Completed":
+    refresh_listbox(T.get_completed_tasks(tasks))
+
+  if filter_choice == "Pending":
+    refresh_listbox(T.get_not_completed_tasks(tasks))
+
+  if filter_choice == "High Priority":
+    refresh_listbox(T.get_priority_tasks(tasks,"High"))
+
+  if filter_choice == "Medium Priority":
+    refresh_listbox(T.get_priority_tasks(tasks,"Medium"))
+
+  if filter_choice == "Low Priority":
+    refresh_listbox(T.get_priority_tasks(tasks,"Low"))
+
+  if filter_choice == "Study":
+    refresh_listbox(T.get_category_tasks(tasks,"Study"))
+
+  if filter_choice == "Work":
+    refresh_listbox(T.get_category_tasks(tasks,"Work"))
+
+  if filter_choice == "Personal":
+    refresh_listbox(T.get_category_tasks(tasks,"Personal"))
+
+  if filter_choice == "Health":
+    refresh_listbox(T.get_category_tasks(tasks,"Health"))
+
+  if filter_choice == "Programming":
+    refresh_listbox(T.get_category_tasks(tasks,"Programming"))
+
+  
+
+
 
 #The function will open a window for the user to add tasks
 def open_add_window(): 
@@ -55,7 +96,7 @@ def open_add_window():
     
     messagebox.showinfo("Success","Task added successfully")
 
-    refresh_listbox()
+    refresh_listbox(tasks)
     add_window.destroy()
 
 
@@ -95,7 +136,7 @@ def completed_task_gui():
   index = selected[0]
   tasks[index].completed = True
   T.sort_tasks(tasks)
-  refresh_listbox()
+  refresh_listbox(tasks)
 
 #The function will delete selected task
 def delete_task_gui():
@@ -109,7 +150,7 @@ def delete_task_gui():
   if messagebox.askyesno("Delete Task",f"Delete '{d_task.title}'?"):
     tasks.pop(index)
     T.sort_tasks(tasks)
-  refresh_listbox()
+  refresh_listbox(tasks)
 
 #The function will open a designated window for the user to edit the task
 def open_edit_window_gui(event=None):
@@ -133,7 +174,7 @@ def open_edit_window_gui(event=None):
     task.priority = priority
     task.category = category
 
-    refresh_listbox()
+    refresh_listbox(tasks)
     edit_window.destroy()
 
   selected = task_listbox.curselection()
@@ -401,6 +442,8 @@ title_label.pack() #puts the label on the window
 
 filter_combobx = ttk.Combobox(root,values=["All","Completed","Pending","High Priority","Medium Priority","Low Priority","Study","Work","Personal","Health","Programming"], state= "readonly")
 filter_combobx.current(0)
+tk.Label(root,text="Search by: ").pack()
+filter_combobx.bind("<<ComboboxSelected>>",show_filterd)
 filter_combobx.pack()
 
 list_frame = tk.Frame(root)
@@ -437,7 +480,7 @@ statistics_button.pack(side=tk.LEFT,padx=5,pady=5)
 search_button = tk.Button(control_frame,text="Search",command=open_search_window)
 search_button.pack(side=tk.LEFT,padx=5,pady=5)
 
-refresh_listbox()
+refresh_listbox(tasks)
 
 root.protocol("WM_DELETE_WINDOW",on_closing)
 
