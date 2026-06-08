@@ -6,6 +6,7 @@ from Task_C import Task
 import Task as T
 import Validation as V
 from datetime import  datetime
+import csv
 
 #The function will save the tasks list as a JSON file
 def on_closing():
@@ -437,7 +438,10 @@ def open_search_window():
 
   res_scrollbar.config(command=res_listbox.yview)
 
-  
+#The function will convert the tasks list to a csv file and will announce to the user when completed
+def export_file_gui():
+  filename = T.export_tasks_csv(tasks)
+  messagebox.showinfo("Export Completed",f'File exported to {filename}')  
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 tasks = load_tasks()
@@ -494,6 +498,9 @@ statistics_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 search_button = tk.Button(control_frame,text="Search",command=open_search_window)
 search_button.pack(side=tk.LEFT,padx=5,pady=5)
+
+export_button = tk.Button(control_frame,text="Exprt csv",command=export_file_gui)
+export_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 T.sort_tasks(tasks)
 refresh_listbox(tasks)

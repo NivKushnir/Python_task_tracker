@@ -1,6 +1,7 @@
 from Task_C import Task
 from datetime import datetime
 import Validation as V
+import csv
 
 #The function will return datetime object of due_date
 def get_due_date(task):
@@ -126,6 +127,15 @@ def search_by_date_range(tasks, start_date, end_date):
 #the function will return a list of tasks filterd by category
 def search_by_category(tasks,category):
     return [task for task in tasks if task.category == category]
+
+def export_tasks_csv(tasks):
+    with open("My_tasks.csv","w",newline="",encoding="utf-8") as file:
+        writer = csv.writer(file)
+
+        writer.writerow(["Title","Completed","Priority","Due Date","Category"])
+        for task in tasks:
+            writer.writerow([task.title,task.completed,task.priority,task.due_date,task.category])
+    return "My_tasks.csv"
 
 #the fuction will create a task object and will add it to the task list
 def add_task(tasks):
