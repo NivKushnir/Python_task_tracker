@@ -23,6 +23,8 @@ def refresh_listbox():
   if not tasks:
     task_listbox.insert(tk.END,"No tasks available")
 
+  T.sort_tasks(tasks)
+
   for task in tasks:
     task_listbox.insert(tk.END,str(task))
     index = task_listbox.size()-1
@@ -336,6 +338,11 @@ def open_search_window():
     
     for task in res:
       res_listbox.insert(tk.END,str(task))
+      index = res_listbox.size()-1
+      if tasks[index].completed:
+        res_listbox.itemconfig(index,foreground ="green")
+      elif T.is_overdue(tasks[index]):
+        res_listbox.itemconfig(index,foreground ="red")
 
 
 
@@ -391,6 +398,10 @@ root.geometry("800x600") #size of the window
 
 title_label = tk.Label(root,text="Task Tracker" , font=("Arial",24)) #creates the label for the window
 title_label.pack() #puts the label on the window 
+
+filter_combobx = ttk.Combobox(root,values=["All","Completed","Pending","High Priority","Medium Priority","Low Priority","Study","Work","Personal","Health","Programming"], state= "readonly")
+filter_combobx.current(0)
+filter_combobx.pack()
 
 list_frame = tk.Frame(root)
 list_frame.pack(fill=tk.BOTH,expand=True)
