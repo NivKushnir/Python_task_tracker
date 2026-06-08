@@ -128,6 +128,7 @@ def search_by_date_range(tasks, start_date, end_date):
 def search_by_category(tasks,category):
     return [task for task in tasks if task.category == category]
 
+#The function will convert the tasks list to a csv file
 def export_tasks_csv(tasks):
     with open("My_tasks.csv","w",newline="",encoding="utf-8") as file:
         writer = csv.writer(file)
