@@ -46,8 +46,21 @@ def get_not_completed_tasks(tasks):
     return [task for task in tasks if not task.completed]
 
 #The function will sort out tasks list
-def sort_tasks(tasks):
-       tasks.sort(key=lambda task: (task.completed,task.due_date))
+def sort_tasks(tasks,sort_by ="Due date"):
+    if sort_by == "Due date":
+        tasks.sort(key=lambda task: (task.completed,task.due_date))
+    
+    elif sort_by == "Priority":
+        priority_order = {"High":0,"Medium":1,"Low":2}
+        tasks.sort(key=lambda task: (priority_order[task.priority]))
+    
+    elif sort_by == "Title":
+        tasks.sort(key=lambda task: (task.completed,task.title.lower()))
+
+    elif sort_by == "Category":
+        catrgory_oreder ={"Study":0,"Work":1,"Personal":2,"Health":3,"Programming":4}
+        tasks.sort(key=lambda task: (catrgory_oreder[task.category]))
+    
 
 #The function will return the amount of the wanted priority tasks
 def count_priority(tasks,priority):

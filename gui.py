@@ -23,8 +23,6 @@ def refresh_listbox(tasks):
   if not tasks:
     task_listbox.insert(tk.END,"No tasks available")
 
-  T.sort_tasks(tasks)
-
   for task in tasks:
     task_listbox.insert(tk.END,str(task))
     index = task_listbox.size()-1
@@ -33,7 +31,25 @@ def refresh_listbox(tasks):
     elif T.is_overdue(task):
       task_listbox.itemconfig(index,foreground ="red")
 
+def apply_sort(event=None):
+  sort_choice = sort_combobox.get()
 
+  if sort_choice =="Due date":
+    T.sort_tasks(tasks)
+  
+  elif sort_choice == "Priority":
+    T.sort_tasks(tasks,"Priority")
+  
+  elif sort_choice == "Title":
+    T.sort_tasks(tasks,"Title")
+
+  elif sort_choice == "Category":
+    T.sort_tasks(tasks,"Category")
+  
+  refresh_listbox(tasks)
+
+
+#The function will show only the task we filterd
 def show_filterd(event=None):
   filter_choice = filter_combobx.get()
 
@@ -442,9 +458,15 @@ title_label.pack() #puts the label on the window
 
 filter_combobx = ttk.Combobox(root,values=["All","Completed","Pending","High Priority","Medium Priority","Low Priority","Study","Work","Personal","Health","Programming"], state= "readonly")
 filter_combobx.current(0)
-tk.Label(root,text="Search by: ").pack()
+tk.Label(root,text="Filter:").pack()
 filter_combobx.bind("<<ComboboxSelected>>",show_filterd)
 filter_combobx.pack()
+
+sort_combobox = ttk.Combobox(root,values=["Due date","Priority","Title","Category"],state="readonly")
+sort_combobox.current(0)
+tk.Label(root,text="Sort By:").pack()
+sort_combobox.bind("<<ComboboxSelected>>",apply_sort)
+sort_combobox.pack()
 
 list_frame = tk.Frame(root)
 list_frame.pack(fill=tk.BOTH,expand=True)
@@ -480,6 +502,7 @@ statistics_button.pack(side=tk.LEFT,padx=5,pady=5)
 search_button = tk.Button(control_frame,text="Search",command=open_search_window)
 search_button.pack(side=tk.LEFT,padx=5,pady=5)
 
+T.sort_tasks(tasks)
 refresh_listbox(tasks)
 
 root.protocol("WM_DELETE_WINDOW",on_closing)
