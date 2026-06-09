@@ -17,6 +17,25 @@ def on_closing():
 def show_error(msg):
   messagebox.showerror("Error", msg)
 
+def show_notifications():
+  overdue_tasks = T.get_overdue_tasks(tasks)
+  today_tasks = T.get_due_today_tasks(tasks)
+
+  if not overdue_tasks and not today_tasks:
+    return
+  
+  message =""
+
+  if overdue_tasks:
+    message+=f'You have {len(overdue_tasks)} overdue tasks!\n'
+  if today_tasks:
+    message+=f'You have {len(today_tasks)} tasks due today!\n'
+
+  if overdue_tasks:
+    messagebox.showwarning("Task remainder",message)
+  else:
+    messagebox.showinfo("Task  remainder", message)
+
 #Refreshes all the tasks we have in the listbox
 def refresh_listbox(tasks):
   task_listbox.delete(0,tk.END)
@@ -504,6 +523,8 @@ export_button.pack(side=tk.LEFT,padx=5,pady=5)
 
 T.sort_tasks(tasks)
 refresh_listbox(tasks)
+
+show_notifications()
 
 root.protocol("WM_DELETE_WINDOW",on_closing)
 
