@@ -41,7 +41,9 @@ def refresh_listbox(tasks):
   task_listbox.delete(0,tk.END)
 
   if not tasks:
-    task_listbox.insert(tk.END,"No tasks available")
+    #task_listbox.insert(tk.END,"No tasks available")
+    show_error("No tasks available")
+    return
 
   for task in tasks:
     task_listbox.insert(tk.END,str(task))
@@ -160,6 +162,7 @@ def completed_task_gui():
   selected = task_listbox.curselection()
 
   if not selected:
+    show_error("Please select a task first")
     return
   
   index = selected[0]
@@ -172,6 +175,7 @@ def delete_task_gui():
   selected = task_listbox.curselection()
 
   if not selected:
+    show_error("Please select a task first")
     return
   
   index = selected[0]
@@ -209,6 +213,7 @@ def open_edit_window_gui(event=None):
   selected = task_listbox.curselection()
 
   if not selected:
+    show_error("Please select a task first")
     return
   
   index = selected[0]
@@ -259,8 +264,8 @@ def open_statistics_window():
   title_label = tk.Label(statistic_window,text="Statistics" , font=("Arial",24)) 
   title_label.pack()
 
-  summery_frame =tk.Frame(statistic_window)
-  summery_frame.pack(fill=tk.X)
+  summary_frame =tk.Frame(statistic_window)
+  summary_frame.pack(fill=tk.X)
   text_frame = tk.Frame(statistic_window)
   text_frame.pack(fill=tk.BOTH,expand=True)
 
@@ -276,29 +281,29 @@ def open_statistics_window():
   completed_total = sum(task.completed for task in tasks)
   completion_rate = T.get_completion_rate(tasks)
 
-  tk.Label(summery_frame,text=f'Total tasks: {total_tasks}').pack()
-  tk.Label(summery_frame,text=f'Total completed: {completed_total}').pack()
-  tk.Label(summery_frame,text=f'Tasks left: {total_tasks-completed_total} tasks').pack()
-  tk.Label(summery_frame,text=f'Completiom rate: {completion_rate:.1f}%').pack()
-  progress = ttk.Progressbar(summery_frame,orient="horizontal",length=300,mode="determinate")
+  tk.Label(summary_frame,text=f'Total tasks: {total_tasks}').pack()
+  tk.Label(summary_frame,text=f'Total completed: {completed_total}').pack()
+  tk.Label(summary_frame,text=f'Tasks left: {total_tasks-completed_total} tasks').pack()
+  tk.Label(summary_frame,text=f'Completiom rate: {completion_rate:.1f}%').pack()
+  progress = ttk.Progressbar(summary_frame,orient="horizontal",length=300,mode="determinate")
   progress["value"]=completion_rate
   progress.pack(pady=5)
-  tk.Label(summery_frame,text = f'High priority tasks left: {T.count_priority(tasks,"High")}').pack()
-  tk.Label(summery_frame,text = f'Medium priority tasks left: {T.count_priority(tasks,"Medium")}').pack()
-  tk.Label(summery_frame,text = f'Low priority tasks left: {T.count_priority(tasks,"Low")}').pack()
+  tk.Label(summary_frame,text = f'High priority tasks left: {T.count_priority(tasks,"High")}').pack()
+  tk.Label(summary_frame,text = f'Medium priority tasks left: {T.count_priority(tasks,"Medium")}').pack()
+  tk.Label(summary_frame,text = f'Low priority tasks left: {T.count_priority(tasks,"Low")}').pack()
 
-  tk.Label(summery_frame,text = f'Study category tasks left: {T.count_category(tasks,"Study")}').pack()
-  tk.Label(summery_frame,text = f'Work category tasks left: {T.count_category(tasks,"Work")}').pack()
-  tk.Label(summery_frame,text = f'Personal category tasks left: {T.count_category(tasks,"Personal")}').pack()
-  tk.Label(summery_frame,text = f'Health category tasks left: {T.count_category(tasks,"Health")}').pack()
-  tk.Label(summery_frame,text = f'Programming category tasks left: {T.count_category(tasks,"Programming")}').pack()
+  tk.Label(summary_frame,text = f'Study category tasks left: {T.count_category(tasks,"Study")}').pack()
+  tk.Label(summary_frame,text = f'Work category tasks left: {T.count_category(tasks,"Work")}').pack()
+  tk.Label(summary_frame,text = f'Personal category tasks left: {T.count_category(tasks,"Personal")}').pack()
+  tk.Label(summary_frame,text = f'Health category tasks left: {T.count_category(tasks,"Health")}').pack()
+  tk.Label(summary_frame,text = f'Programming category tasks left: {T.count_category(tasks,"Programming")}').pack()
 
   overdue_tasks= T.get_overdue_tasks(tasks)
   due_today= T.get_due_today_tasks(tasks)
   tasks_this_week= T.get_due_this_week_tasks(tasks)
-  tk.Label(summery_frame,text = f'Overdue tasks: {len(overdue_tasks)}').pack()
-  tk.Label(summery_frame,text = f'Due today: {len(due_today)} tasks').pack()
-  tk.Label(summery_frame,text = f'Due this week: {len(tasks_this_week)} tasks').pack()
+  tk.Label(summary_frame,text = f'Overdue tasks: {len(overdue_tasks)}').pack()
+  tk.Label(summary_frame,text = f'Due today: {len(due_today)} tasks').pack()
+  tk.Label(summary_frame,text = f'Due this week: {len(tasks_this_week)} tasks').pack()
 
   add_tasks(stat_text,"Overdue Tasks",T.get_overdue_tasks(tasks))
   stat_text.insert(tk.END,"\n")
