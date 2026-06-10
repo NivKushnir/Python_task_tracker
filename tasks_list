@@ -1,0 +1,51 @@
+[
+    {
+        "title": "finish readme",
+        "completed": false,
+        "priority": "Medium",
+        "due_date": "2026-06-06",
+        "category": "Programming"
+    },
+    {
+        "title": "Live concert",
+        "completed": false,
+        "priority": "Medium",
+        "due_date": "2026-06-11",
+        "category": "Personal"
+    },
+    {
+        "title": "Buy groceries",
+        "completed": false,
+        "priority": "Low",
+        "due_date": "2026-06-12",
+        "category": "Personal"
+    },
+    {
+        "title": "Study Group",
+        "completed": false,
+        "priority": "High",
+        "due_date": "2026-06-12",
+        "category": "Study"
+    },
+    {
+        "title": "GYM",
+        "completed": true,
+        "priority": "Low",
+        "due_date": "2026-06-05",
+        "category": "Health"
+    },
+    {
+        "title": "OOP Assignment",
+        "completed": true,
+        "priority": "Medium",
+        "due_date": "2026-06-09",
+        "category": "Study"
+    },
+    {
+        "title": "Teaching",
+        "completed": true,
+        "priority": "High",
+        "due_date": "2026-06-09",
+        "category": "Work"
+    }
+]
