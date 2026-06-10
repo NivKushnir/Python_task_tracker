@@ -1,6 +1,9 @@
 import Task as T
 import Storage as S
 from Task_C import Task
+from gui import *
+
+root.mainloop()
 
 #The trackers menu
 Menu = {1: "Add Task" ,2:"View Tasks" ,3:"Task completed", 4:"Show Statistics" ,5:"Filter Tasks" ,6:"Edit task" ,7:"Delete tasks" ,8:"Search tasks" ,0:"Exit"}
