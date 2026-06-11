@@ -2,7 +2,9 @@ import Task as T
 import Storage as S
 from Task_C import Task
 from gui import *
+import Database as DB
 
+DB.create_database()
 root.mainloop()
 
 #The trackers menu
