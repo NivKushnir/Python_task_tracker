@@ -1,4 +1,5 @@
 import sqlite3
+from Task_C import Task
 
 #Creates a databse for the project
 def create_database():
@@ -35,3 +36,33 @@ def print_db():
         print(row)
 
     conn.close()
+
+def load_tasks_from_db():
+    conn = sqlite3.connect("tasks.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT id,title,completed,priority,due_date,category
+    FROM tasks
+    """)
+
+    rows = cursor.fetchall()
+
+    tasks = []
+
+    # row = (id,title,completed,priority,due_date,category)
+    for row in rows:
+        task = Task(
+            row[1],          # title
+            bool(row[2]),    # completed
+            row[3],          # priority
+            row[4],          # due_date
+            row[5],          # category
+            row[0]           # id
+        )
+
+        tasks.append(task)
+
+    conn.close()
+
+    return tasks

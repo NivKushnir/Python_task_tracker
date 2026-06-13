@@ -7,6 +7,10 @@ import Database as DB
 DB.create_database()
 root.mainloop()
 DB.print_db()
+loaded_tasks = DB.load_tasks_from_db()
+for task in loaded_tasks:
+    print(task)
+
 # #The trackers menu
 # Menu = {1: "Add Task" ,2:"View Tasks" ,3:"Task completed", 4:"Show Statistics" ,5:"Filter Tasks" ,6:"Edit task" ,7:"Delete tasks" ,8:"Search tasks" ,0:"Exit"}
 # tasks = S.load_tasks() # loadind the json file to a list

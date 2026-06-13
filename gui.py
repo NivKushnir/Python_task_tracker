@@ -7,6 +7,7 @@ import Task as T
 import Validation as V
 from datetime import  datetime
 import csv
+import Database as DB
 
 #The function will save the tasks list as a JSON file
 def on_closing():
@@ -468,7 +469,7 @@ def export_file_gui():
   messagebox.showinfo("Export Completed",f'File exported to {filename}')  
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-tasks = load_tasks()
+tasks = DB.load_tasks_from_db()
 
 root = tk.Tk() #creates the window
 root.title("Task Tracker") #sets the title
