@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from Storage import load_tasks,save_tasks
 from Task_C import Task
 import Task as T
 import Validation as V
@@ -11,7 +10,6 @@ import Database as DB
 
 #The function will save the tasks list as a JSON file
 def on_closing():
-  save_tasks(tasks)
   root.destroy()
 
 #The function will show Error msg
