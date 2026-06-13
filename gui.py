@@ -207,7 +207,7 @@ def open_edit_window_gui(event=None):
     task.priority = priority
     task.category = category
 
-    refresh_listbox(tasks)
+    update_view()
     edit_window.destroy()
 
   selected = task_listbox.curselection()
