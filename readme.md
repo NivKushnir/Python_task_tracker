@@ -4,6 +4,8 @@ A desktop task management application built with Python and Tkinter.
 
 The application helps users organize tasks, track deadlines, monitor progress, and manage priorities through a graphical user interface.
 **Status:** Completed personal project for learning Python, GUI development, data persistence, and software design principles.
+
+The SQLite database file (tasks.db) is excluded from version control and will be created automatically on first run.
 ---
 
 ## Features
