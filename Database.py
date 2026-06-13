@@ -24,6 +24,7 @@ def add_task(task):
     conn.commit()
     conn.close()
 
+#The function will print the tasks in the DB 
 def print_db():
     conn = sqlite3.connect("tasks.db")
     cursor = conn.cursor()
@@ -37,6 +38,7 @@ def print_db():
 
     conn.close()
 
+#The function will laod all the tasks in the DB into a list
 def load_tasks_from_db():
     conn = sqlite3.connect("tasks.db")
     cursor = conn.cursor()
@@ -66,3 +68,56 @@ def load_tasks_from_db():
     conn.close()
 
     return tasks
+
+#The function will update a row in the DB
+def update_task(task):
+    conn = sqlite3.connect("tasks.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    UPDATE tasks
+    SET title=?,
+        completed=?,
+        priority=?,
+        due_date=?,
+        category=?
+    WHERE id=?
+    """,
+    (
+        task.title,
+        int(task.completed),
+        task.priority,
+        task.due_date,
+        task.category,
+        task.id
+    ))
+
+    conn.commit()
+    conn.close()
+
+#The function will delete a task from DB
+def delete_task(task_id):
+    conn = sqlite3.connect("tasks.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM tasks WHERE id=?",
+        (task_id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+#The function will update the completed value of a task in DB
+def mark_completed(completed,task_id):
+    conn = sqlite3.connect("tasks.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """UPDATE tasks 
+        SET completed = ? 
+        WHERE id=?""",
+        (int(completed),task_id))
+
+    conn.commit()
+    conn.close()

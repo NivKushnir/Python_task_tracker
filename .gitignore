@@ -2,3 +2,4 @@
 __pycache__/
 tasks_list.json
 My_tasks.csv
+tasks.db

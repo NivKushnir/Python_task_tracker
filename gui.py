@@ -123,12 +123,13 @@ def open_add_window():
       show_error("Date must be YYYY-MM-DD")
       return
     
-    tasks.append(Task(title,False,priority,due_date,category))
-    T.sort_tasks(tasks)
+    DB.add_task(Task(title,False,priority,due_date,category))
+    tasks.clear()
+    tasks.extend(DB.load_tasks_from_db())
     
     messagebox.showinfo("Success","Task added successfully")
 
-    refresh_listbox(tasks)
+    update_view()
     add_window.destroy()
 
 
@@ -167,9 +168,12 @@ def completed_task_gui():
     return
   
   index = selected[0]
-  tasks[index].completed = True
-  T.sort_tasks(tasks)
-  refresh_listbox(tasks)
+  task = tasks[index]
+  task.completed = True
+  DB.mark_completed(task.completed,task.id)
+  tasks.clear()
+  tasks.extend(DB.load_tasks_from_db())
+  update_view()
 
 #The function will delete selected task
 def delete_task_gui():
@@ -182,9 +186,10 @@ def delete_task_gui():
   index = selected[0]
   d_task=tasks[index]
   if messagebox.askyesno("Delete Task",f"Delete '{d_task.title}'?"):
-    tasks.pop(index)
-    T.sort_tasks(tasks)
-  refresh_listbox(tasks)
+    DB.delete_task(d_task.id)
+    tasks.clear()
+    tasks.extend(DB.load_tasks_from_db())
+  update_view()
 
 #The function will open a designated window for the user to edit the task
 def open_edit_window_gui(event=None):
@@ -207,6 +212,8 @@ def open_edit_window_gui(event=None):
     task.title=title
     task.priority = priority
     task.category = category
+
+    DB.update_task(task)
 
     update_view()
     edit_window.destroy()
