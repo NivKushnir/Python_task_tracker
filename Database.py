@@ -1,8 +1,10 @@
 import sqlite3
 from Task_C import Task
+import os
 
 #Creates a databse for the project
 def create_database():
+    print(os.path.abspath("tasks.db"))
     conn = sqlite3.connect("tasks.db")
 
     cursor = conn.cursor()

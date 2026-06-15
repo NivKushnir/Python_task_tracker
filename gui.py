@@ -8,6 +8,9 @@ from datetime import  datetime
 import csv
 import Database as DB
 
+tasks = DB.load_tasks_from_db()
+display_tasks = tasks.copy()
+
 #The function will save the tasks list as a JSON file
 def on_closing():
   root.destroy()
@@ -54,6 +57,7 @@ def refresh_listbox(tasks):
 
 #The function will update the view of tasks
 def update_view(event = None):
+  global display_tasks
   filtered_tasks = tasks.copy()
   filter_choice = filter_combobx.get()
 
@@ -101,7 +105,8 @@ def update_view(event = None):
   elif sort_choice == "Category":
     T.sort_tasks(filtered_tasks,"Category")
   
-  refresh_listbox(filtered_tasks)
+  display_tasks = filtered_tasks
+  refresh_listbox(display_tasks)
 
 
 #The function will open a window for the user to add tasks
@@ -166,7 +171,7 @@ def completed_task_gui():
     return
   
   index = selected[0]
-  task = tasks[index]
+  task = display_tasks[index]
   task.completed = True
   DB.mark_completed(task.completed,task.id)
   tasks.clear()
@@ -182,7 +187,7 @@ def delete_task_gui():
     return
   
   index = selected[0]
-  d_task=tasks[index]
+  d_task=display_tasks[index]
   if messagebox.askyesno("Delete Task",f"Delete '{d_task.title}'?"):
     DB.delete_task(d_task.id)
     tasks.clear()
@@ -474,7 +479,6 @@ def export_file_gui():
   messagebox.showinfo("Export Completed",f'File exported to {filename}')  
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-tasks = DB.load_tasks_from_db()
 
 root = tk.Tk() #creates the window
 root.title("Task Tracker") #sets the title
@@ -532,8 +536,8 @@ search_button.pack(side=tk.LEFT,padx=5,pady=5)
 export_button = tk.Button(control_frame,text="Exprt csv",command=export_file_gui)
 export_button.pack(side=tk.LEFT,padx=5,pady=5)
 
-T.sort_tasks(tasks)
-refresh_listbox(tasks)
+T.sort_tasks(display_tasks)
+refresh_listbox(display_tasks)
 
 show_notifications()
 
